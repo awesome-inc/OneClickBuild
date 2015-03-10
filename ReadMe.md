@@ -300,7 +300,7 @@ in [AutoFac Issue 415](https://code.google.com/p/autofac/issues/detail?id=415).
 
 You maybe targeting the `x86` platform and have defined `AnyCPU` as default in your project file.
 When building from Visual Studio the platform property is set via the solution file. However, when building
-the single you did not specify the platform property, thus defaulting to `AnyCPU` resulting in `OutputPath` not set. 
+the project you did not specify the platform property, thus defaulting to `AnyCPU` resulting in `OutputPath` not set. 
 To fix this issue either set the Platform property accordingly or just set the default to `x86` like this
 
 	<?xml version="1.0" encoding="utf-8"?>
