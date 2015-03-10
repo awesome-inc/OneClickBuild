@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>MyLib</id>
+    <version>$Version$</version>
+    <title>MyLib</title>
+    <authors>MyAuthor</authors>
+    <owners/>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>My description</description>
+    <summary/>
+    <copyright/>
+    <releaseNotes>Revision: $Revision$</releaseNotes>
+    <projectUrl>https://your/project/url</projectUrl>
+    <dependencies/>
+    <references></references>
+    <tags/>
+  </metadata>
+  <files>
+    <file src="bin\Release\MyLib.dll" target="lib" />
+    <file src="bin\Release\MyLib.pdb" target="lib" />
+  </files>
+</package>
