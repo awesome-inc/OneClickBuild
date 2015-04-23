@@ -7,7 +7,7 @@ nuget:
 build_script:
 - build OneClickBuild\OneClickBuild.csproj /t:Package /v:m
 before_deploy:
-- nuget setapikey %apiKey%  
+- nuget setapikey %apiKey% -Verbosity quiet
 deploy_script:
 - build OneClickBuild\OneClickBuild.csproj /t:Deploy /v:m
 test: off
