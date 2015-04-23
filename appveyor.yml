@@ -1,6 +1,13 @@
 version: 1.3.4.{build}
+environment:
+  apiKey:
+    secure: lrwREUV4nO99AU0A6xVx/MNF0BaJc8A1B8dwEGMLqmYKGqD5E7PJ/IC9RHcle6pk
 nuget:
   disable_publish_on_pr: true
 build_script:
+- build OneClickBuild\OneClickBuild.csproj /t:Package /v:m
+before_deploy:
+- nuget setapikey %apiKey%  
+deploy_script:
 - build OneClickBuild\OneClickBuild.csproj /t:Deploy /v:m
 test: off
