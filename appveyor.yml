@@ -1,13 +1,35 @@
-version: 1.3.4.{build}
-environment:
-  apiKey:
-    secure: lrwREUV4nO99AU0A6xVx/MNF0BaJc8A1B8dwEGMLqmYKGqD5E7PJ/IC9RHcle6pk
-nuget:
-  disable_publish_on_pr: true
-build_script:
-- build OneClickBuild\OneClickBuild.csproj /t:Package /v:m
-before_deploy:
-- nuget setapikey %apiKey% -Verbosity quiet
-deploy_script:
-- build OneClickBuild\OneClickBuild.csproj /t:Deploy /v:m
-test: off
+# configuration for "master" branch
+-
+  branches:
+    only:
+      - master
+  version: 1.4.0.{build}
+  test: off
+  nuget:
+    disable_publish_on_pr: true
+  environment:
+    apiKey:
+      secure: lrwREUV4nO99AU0A6xVx/MNF0BaJc8A1B8dwEGMLqmYKGqD5E7PJ/IC9RHcle6pk
+  before_build:
+  - nuget setapikey %apiKey% -Verbosity quiet
+  build_script:
+  - build.bat OneClickBuild.sln /t:Deploy /v:m
+#  after_build:
+#  - ps: >-
+#      $wc = New-Object 'System.Net.WebClient'
+#    
+#      $wc.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\testresults\OneClickBuild.Tests.xml))
+
+# all other branches
+-
+  version: 1.4.0.{build}
+  test: off
+  nuget:
+    disable_publish_on_pr: true
+  build_script:
+  - build.bat OneClickBuild.sln /t:Package /v:m
+ # after_build:
+ # - ps: >-
+ #     $wc = New-Object 'System.Net.WebClient'
+ #   
+ #     $wc.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\testresults\FontAweSome.WPF.Tests.xml))
