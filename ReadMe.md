@@ -1,6 +1,14 @@
 #OneClickBuild
 
-The *OneClickBuild* package includes a simple `build.bat` and msbuild targets bringing you closer to the famous *1-Click-Build*. The `build.bat` shortcuts to MSBuild, the targets include 
+The *OneClickBuild* package includes a simple `build.bat` and msbuild targets bringing you closer to the famous *1-Click-Build*. 
+
+[![Build status](https://ci.appveyor.com/api/projects/status/qs1cu14tjvh1j0le?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/oneclickbuild)
+
+![NuGet Version](https://img.shields.io/nuget/v/OneClickBuild.svg?style=flat-square)
+
+![NuGet Version](https://img.shields.io/nuget/dt/OneClickBuild.svg?style=flat-square)
+
+The `build.bat` shortcuts to MSBuild, the targets include 
 
 - solution wide assembly version and assembly info files,
 - git versioning,
