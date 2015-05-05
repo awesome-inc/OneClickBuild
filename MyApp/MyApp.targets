@@ -4,4 +4,9 @@
   <PropertyGroup>
     <CoverageFailOnTargetFail>false</CoverageFailOnTargetFail>
   </PropertyGroup>
+
+  <Target Name="Deploy">
+    <Message Text="Skipping 'Deploy' for $(ProjectName)" Importance="High" />
+  </Target>
+
 </Project>

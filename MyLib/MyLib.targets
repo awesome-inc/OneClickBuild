@@ -4,4 +4,8 @@
   <PropertyGroup>
     <PackageVersion>1.0.0</PackageVersion>
   </PropertyGroup>
+
+  <Target Name="Deploy">
+    <Message Text="Skipping 'Deploy' for $(ProjectName)" Importance="High" />
+  </Target>
 </Project>

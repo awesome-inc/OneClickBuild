@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<PropertyGroup>
-		<PackageVersion>1.4.0.$(Build)</PackageVersion>
+		<PackageVersion>1.4.1.$(Build)</PackageVersion>
 	</PropertyGroup>
 
 	<!-- ## Uncomment to customize targets to customize test ##
