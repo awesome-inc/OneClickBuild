@@ -2,6 +2,7 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <NoWarn>2008</NoWarn>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{02B527C6-BE5E-4245-8B08-6D11E5825986}</ProjectGuid>
@@ -34,26 +35,17 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="tools\before.sln.targets" />
     <None Include="tools\empty.targets" />
     <None Include="tools\VersionInfo.g.cs" />
     <None Include="tools\SolutionInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="tools\build.bat" />
-    <None Include="tools\solution.targets">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="tools\solution.targets" />
     <None Include="tools\Uninstall.ps1" />
     <None Include="tools\Install.ps1" />
     <None Include="tools\build.targets" />
-    <None Include="Package.nuspec">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="tools\OneClickBuild.psm1" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="Package.nuspec" />
     <None Include="tools\NextSteps.OneClickBuild.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

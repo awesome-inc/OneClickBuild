@@ -44,12 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\SolutionInfo.cs">
-      <Link>Properties\SolutionInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\VersionInfo.g.cs">
-      <Link>Properties\VersionInfo.g.cs</Link>
-    </Compile>
     <Compile Include="Class1.cs" />
     <Compile Include="Tests\Class1Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
