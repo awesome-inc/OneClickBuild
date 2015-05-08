@@ -4,7 +4,17 @@
 	<PropertyGroup>
 		<!-- TODO: Adjust version -->
 		<PackageVersion>1.0.0.$(Build)</PackageVersion>
-	</PropertyGroup>
+  </PropertyGroup>
+
+  <ItemGroup>
+     <Compile Include="$(SolutionDir)SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="$(SolutionDir)VersionInfo.g.cs">
+      <Link>Properties\VersionInfo.g.cs</Link>
+    </Compile>
+  </ItemGroup>
+  
 
 	<!-- ## Uncomment to customize targets to customize test ##
 	<Target Name="Test" DependsOnTargets="TestWithNUnit"/>
