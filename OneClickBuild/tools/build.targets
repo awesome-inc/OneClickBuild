@@ -8,10 +8,13 @@
   <Target Name="Package" DependsOnTargets="Build;PackageWithNuGet"/>
   <Target Name="Deploy" DependsOnTargets="Build;DeployWithNuGet"/>
 
-  <!-- Use Jenkins Build-Number, if specified or 0 -->
   <PropertyGroup>
+    <!-- Use AppVeyor Build-Number, cf.: http://www.appveyor.com/docs/environment-variables -->
+    <Build Condition="'$(CI)' == 'True'">$(APPVEYOR_BUILD_NUMBER)</Build>
+    <!-- Use Jenkins Build-Number -->
     <Build Condition="'$(BUILD_NUMBER)' != ''">$(BUILD_NUMBER)</Build>
-    <Build Condition="'$(BUILD_NUMBER)' == ''">0</Build>
+    <!-- Fallback to "0" if still not set -->
+    <Build Condition="'$(Build)' == ''">0</Build>
     <!-- override this setting in solution.targets -->
     <PackageVersion>1.0.0.$(Build)</PackageVersion>
   </PropertyGroup>

@@ -3,18 +3,16 @@
 
 ##Action Items
 
+1. Set the version number in `solution.targets`. Do not change the `VersionInfo.g.cs` file manually.
 
-1.  Include a *"Add as Link"* to you project for both files: `SolutionInfo.cs` and `VersionInfo.g.cs`
-Keep in mind that `VersionInfo.g.cs` is a auto generated file during the build process.
-
-2. Set the version number in `solution.targets`. Do not change the `VersionInfo.g.cs` file manually.
-
-3. Change the `SolutionInfo.cs` file and modify the following attributes:
+2. Modify `SolutionInfo.cs`:
 
 		[assembly: AssemblyTrademark("<trademark name>")]
 		[assembly: AssemblyProduct("<product name>")]
+    
+3. Remove duplicate items from your projects `AssemblyInfo.cs` file
 
-###`before.<solution-file>.targets`##
+### `before.<solution-file>.targets`
 
 This is important to enable the OneClickBuild-specific targets on 
 	1. the solution meta-project and on

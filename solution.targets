@@ -5,6 +5,15 @@
 		<PackageVersion>1.4.2.$(Build)</PackageVersion>
 	</PropertyGroup>
 
+  <ItemGroup>
+     <Compile Include="$(SolutionDir)SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
+    <Compile Include="$(SolutionDir)VersionInfo.g.cs">
+      <Link>Properties\VersionInfo.g.cs</Link>
+    </Compile>
+  </ItemGroup>
+  
 	<!-- ## Uncomment to customize targets to customize test ##
 	<Target Name="Test" DependsOnTargets="TestWithNUnit"/>
 	<Target Name="Coverage" DependsOnTargets="OpenCoverWithNUnit"/>

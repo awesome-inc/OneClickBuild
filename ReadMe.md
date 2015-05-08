@@ -1,6 +1,10 @@
-#OneClickBuild
+[![Build status](https://ci.appveyor.com/api/projects/status/qs1cu14tjvh1j0le?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/oneclickbuild) ![NuGet Version](https://img.shields.io/nuget/v/OneClickBuild.svg?style=flat-square) ![NuGet Version](https://img.shields.io/nuget/dt/OneClickBuild.svg?style=flat-square)
 
-The *OneClickBuild* package includes a simple `build.bat` and msbuild targets bringing you closer to the famous *1-Click-Build*. The `build.bat` shortcuts to MSBuild, the targets include 
+# OneClickBuild
+
+The *OneClickBuild* package includes a simple `build.bat` and msbuild targets bringing you closer to the famous *1-Click-Build*. 
+
+The `build.bat` shortcuts to MSBuild, the targets include 
 
 - solution wide assembly version and assembly info files,
 - git versioning,
@@ -11,19 +15,19 @@ The *OneClickBuild* package includes a simple `build.bat` and msbuild targets br
 The package aims to reduce dependencies on pre-installed external tools by getting the runners directly from NuGet. The only thing you need is
 	
 1. .NET for MSBuild (preinstalled since Windows 7) and
-2. NuGet.exe (in your path)
+2. `NuGet.exe` (in your path)
 
 A new member coming to your team does not require any special tooling to compile, run tests, etc.
 This makes it also perfectly suitable for continuous integration since your build jobs reduce to the same one-liner you can use in development.
 
-##Download
+## Download
 
 The OneClickBuild package is available via package name `OneClickBuild`.
 To install OneClickBuild, run the following command in the Package Manager Console
 
 	PM> Install-Package OneClickBuild
 	
-##Additional targets
+## Additional targets
 
 OneClickBuild brings the following additional build targets
 
@@ -33,7 +37,7 @@ OneClickBuild brings the following additional build targets
 - **Package**: Packages the project, default: [nuget pack](http://docs.nuget.org/docs/creating-packages/creating-and-publishing-a-package#Creating_a_Package)
 - **Deploy**: Deploys the project package, default: [nuget push](http://docs.nuget.org/docs/creating-packages/creating-and-publishing-a-package)
  
-##Examples for Usage
+## Usage Examples
 
 ### Building your project
 
@@ -76,7 +80,7 @@ with
 
 The first three version parts need to be set in `solution.targets`.
 
-### Including versioning to your project
+### Including version number to your project
 
 Most solution wide settings for all assemblies are stored in `SolutionInfo.cs` except of the version information, which is defined in `solution.targets` and generated into `VersionInfo.g.cs`.
 
@@ -285,7 +289,7 @@ Here is a snippet from a sample *sonar-project.properties*:
 
 ### I get a warning from NuGet.exe saying that "restore" is an unknown command.
 
-The *restore*-command is supported since NuGet v2.7. You probably need to update your NuGet.exe by typing
+The command `restore` is supported since NuGet v2.7. You probably need to update your `NuGet.exe` by typing
 
 	nuget.exe update -self
 
@@ -296,7 +300,7 @@ However, at the time of writing *AutoFac* is deployed as [Portable Class Library
 - for .NET 4.0 - requires the [KB2468871](http://support.microsoft.com/kb/2468871)-Patch  as explained
 in [AutoFac Issue 415](https://code.google.com/p/autofac/issues/detail?id=415).
 
-### I get an MSBuild error saying thath OutputPath property is not set
+### I get an MSBuild error saying that OutputPath property is not set
 
 You maybe targeting the `x86` platform and have defined `AnyCPU` as default in your project file.
 When building from Visual Studio the platform property is set via the solution file. However, when building
