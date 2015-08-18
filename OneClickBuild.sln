@@ -16,7 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		packages\repositories.config = packages\repositories.config
 		solution.targets = solution.targets
 		SolutionInfo.cs = SolutionInfo.cs
-		VersionInfo.g.cs = VersionInfo.g.cs
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyApp", "MyApp\MyApp.csproj", "{0471067F-C11C-4D60-90A0-DE0B5E2864E6}"
