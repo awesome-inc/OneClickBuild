@@ -1,19 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-	<PropertyGroup>
-		<PackageVersion>1.4.2.$(Build)</PackageVersion>
-	</PropertyGroup>
-
-  <ItemGroup>
-     <Compile Include="$(SolutionDir)SolutionInfo.cs">
-      <Link>Properties\SolutionInfo.cs</Link>
-    </Compile>
-    <Compile Include="$(SolutionDir)VersionInfo.g.cs">
-      <Link>Properties\VersionInfo.g.cs</Link>
-    </Compile>
-  </ItemGroup>
-  
+	<ItemGroup>
+		 <Compile Include="$(SolutionDir)SolutionInfo.cs">
+			<Link>Properties\SolutionInfo.cs</Link>
+		</Compile>
+	</ItemGroup>
+	
 	<!-- ## Uncomment to customize targets to customize test ##
 	<Target Name="Test" DependsOnTargets="TestWithNUnit"/>
 	<Target Name="Coverage" DependsOnTargets="OpenCoverWithNUnit"/>

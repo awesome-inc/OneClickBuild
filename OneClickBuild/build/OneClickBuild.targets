@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Target Name="Version" BeforeTargets="BeforeBuild" DependsOnTargets="VersionWithGit" />
+  <Target Name="Version" DependsOnTargets="UpdateAssemblyInfo" />
   <Target Name="Test" DependsOnTargets="Build;TestWithNunit"/>
   <Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithNUnit"/>
   <Target Name="CoverageReport" DependsOnTargets="Coverage;OpenCoverReport"/>
@@ -15,8 +15,6 @@
     <Build Condition="'$(BUILD_NUMBER)' != ''">$(BUILD_NUMBER)</Build>
     <!-- Fallback to "0" if still not set -->
     <Build Condition="'$(Build)' == ''">0</Build>
-    <!-- override this setting in solution.targets -->
-    <PackageVersion>1.0.0.$(Build)</PackageVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -48,37 +46,21 @@
   
   </PropertyGroup>
 
-  <!--Git Versioning -->
-  <PropertyGroup>
-    <BuildStarted>$(SolutionDir).build\build.stamp.cache</BuildStarted>
-    <VersionInfo>$(SolutionDir)VersionInfo.g.cs</VersionInfo>
-  </PropertyGroup>
-  <Target Name="VersionWithGit" Inputs="$(BuildStarted)" Outputs="$(VersionInfo)">
-    <PropertyGroup>
-      <Revision>0</Revision>
-    </PropertyGroup>
-    <GitVersion ContinueOnError="true" LocalPath="$(MSBuildProjectDirectory)">
-      <Output TaskParameter="CommitHash" PropertyName="Revision"/>
-    </GitVersion>
-    <AssemblyInfo ContinueOnError="true"
-       OutputFile="$(VersionInfo)" CodeLanguage="CS"
-       AssemblyVersion="$(PackageVersion)" AssemblyFileVersion="$(PackageVersion)" AssemblyInformationalVersion="$(PackageVersion).$(Revision)"/>
-  </Target>
-
   <!-- NuGet Packaging -->
   <Target Name="PackageWithNuGet" DependsOnTargets="Build">
     <Warning Condition="!Exists($(NuspecFile))" Text="Skipping target because .nuspec-file is missing (expected '$(NuspecFile)')" />
-    <NuGetPack Condition="Exists($(NuspecFile))"
-               File="$(NuspecFile)" Properties="Version=$(PackageVersion);Revision=$(Revision);Configuration=$(Configuration)">
-      <Output TaskParameter="OutputFilePath" PropertyName="PackageFile" />
-    </NuGetPack>
+    <Exec Condition="Exists($(NuspecFile))"
+          Command="nuget pack $(NuspecFile) -Properties Version=$(NuGetVersionV2);Revision=$(Sha);Configuration=$(Configuration)"/>
   </Target>
 
   <Target Name="DeployWithNuGet" DependsOnTargets="PackageWithNuGet">
+    <PropertyGroup>
+      <PackageFile>$(ProjectName.$(NuGetVersionV2).nupkg)</PackageFile>
+    </PropertyGroup>
     <Warning Condition="'$(PackageFile)'=='' Or !Exists($(PackageFile))" Text="Skipping target because package file has not been built." />
     <!-- To set API key use "NuGet.exe setApiKey <key> -Source <source>" -->
-    <NuGetPush Condition="'$(PackageFile)'!='' And Exists($(PackageFile))"
-               File="$(PackageFile)" Source="$(NugetSourceToDeploy)" />
+    <Exec Condition="'$(PackageFile)'!='' And Exists($(PackageFile))"
+          Command="nuget push $(PackageFile) -Source $(NugetSourceToDeploy)" />
   </Target>
 
   <!-- NUnit -->
