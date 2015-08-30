@@ -17,46 +17,30 @@
     <Build Condition="'$(Build)' == ''">0</Build>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <TestsProjectPattern Condition="'$(TestsProjectPattern)' == '' And $(OutputType.EndsWith('Exe'))">$(OutDir)$(AssemblyName).exe</TestsProjectPattern>
-    <TestsProjectPattern Condition="'$(TestsProjectPattern)' == '' And '$(OutputType)' == 'Library'">$(OutDir)$(AssemblyName).dll</TestsProjectPattern>
-    <TestResultsDir Condition="'$(TestResultsDir)' == ''">$(SolutionDir)testresults\</TestResultsDir>
-    <TestResults Condition="'$(TestResults)' == ''">$(TestResultsDir)$(ProjectName).Tests.xml</TestResults>
-    <NUnitPath Condition="'$(PlatformTarget)' == 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console-x86.exe</NUnitPath>
-    <NUnitPath Condition="'$(PlatformTarget)' != 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console.exe</NUnitPath>
-    <OpenCoverFilter Condition="'$(OpenCoverFilter)' == ''">+[$(AssemblyName)]* -[*]*Tests -[FluentAssertions]*</OpenCoverFilter>
-    <OpenCoverOutput>$(TestResultsDir)$(ProjectName).Coverage.xml</OpenCoverOutput>
-    <!-- exclude generated code -->
-    <!-- [ExcludeFromCodeCoverage] cf.: https://github.com/OpenCover/opencover/issues/195 -->
-    <OpenCoverExcludeAttributes Condition="'$(OpenCoverExcludeAttributes)' == ''">*DebuggerNonUserCode*;*.GeneratedCode*;*.ExcludeFromCodeCoverage*</OpenCoverExcludeAttributes>
-    <CoverageFailOnTargetFail Condition="'$(CoverageFailOnTargetFail)' == ''">true</CoverageFailOnTargetFail>
-    <CoverageReportDir>$(TestResultsDir)coverage\$(ProjectName)</CoverageReportDir>
-
-    <NuspecFile Condition="'$(NuspecFile)'==''">$(ProjectDir)Package.nuspec</NuspecFile>
-    <NugetSourceToDeploy Condition="'$(NugetSourceToDeploy)'==''">https://www.nuget.org</NugetSourceToDeploy>
-
-    <!--verbosity -->
-    <!-- NUnit verbosity: Off|Error|Warning|Info|Verbose-->
-    <TestVerbosity Condition="'$(TestVerbosity)' == ''">Warning</TestVerbosity>
-    <!--OpenCover verbosity: Off|Fatal|Error|Warn|Info|Debug|Verbose|All -->
-    <CoverageVerbosity Condition="'$(CoverageVerbosity)' == ''">Warn</CoverageVerbosity>
-    <!-- ReportGenerator Verbosity: Verbose|Info|Error -->
-    <CoverageReportVerbosity Condition="'$(CoverageReportVerbosity)' == ''">Error</CoverageReportVerbosity>
-  
-  </PropertyGroup>
+  <!-- solution wide assembly info -->
+  <ItemGroup>
+    <Compile Include="$(SolutionDir)SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
 
   <!--Git Versioning -->
   <Target Name="VersionWithGit">
     <GitVersionTask.GetVersion SolutionDirectory="$(SolutionDir)" />
   </Target>
-  
+
   <!-- NuGet Packaging -->
+  <PropertyGroup>
+    <NuspecFile Condition="'$(NuspecFile)'==''">$(ProjectDir)Package.nuspec</NuspecFile>
+    <NugetSourceToDeploy Condition="'$(NugetSourceToDeploy)'==''">https://www.nuget.org</NugetSourceToDeploy>
+  </PropertyGroup>
+
   <Target Name="PackageWithNuGet" DependsOnTargets="Build;Version">
     <PropertyGroup>
       <PackageVersion>$(GitVersion_MajorMinorPatch).$(Build)</PackageVersion>
       <Revision>$(GitVersion_Sha)</Revision>
     </PropertyGroup>
-  
+
     <Warning Condition="!Exists($(NuspecFile))" Text="Skipping target because .nuspec-file is missing (expected '$(NuspecFile)')" />
     <Exec Condition="Exists($(NuspecFile))"
           Command="nuget pack $(NuspecFile) -Properties Version=$(PackageVersion);Revision=$(Revision);Configuration=$(Configuration)"/>
@@ -72,10 +56,23 @@
           Command="nuget push $(PackageFile) -Source $(NugetSourceToDeploy)" />
   </Target>
 
+
+
   <!-- NUnit -->
   <PropertyGroup>
+    <TestsProjectPattern Condition="'$(TestsProjectPattern)' == '' And $(OutputType.EndsWith('Exe'))">$(OutDir)$(AssemblyName).exe</TestsProjectPattern>
+    <TestsProjectPattern Condition="'$(TestsProjectPattern)' == '' And '$(OutputType)' == 'Library'">$(OutDir)$(AssemblyName).dll</TestsProjectPattern>
+    <TestResultsDir Condition="'$(TestResultsDir)' == ''">$(SolutionDir)testresults\</TestResultsDir>
+    <TestResults Condition="'$(TestResults)' == ''">$(TestResultsDir)$(ProjectName).Tests.xml</TestResults>
+    <NUnitPath Condition="'$(PlatformTarget)' == 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console-x86.exe</NUnitPath>
+    <NUnitPath Condition="'$(PlatformTarget)' != 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console.exe</NUnitPath>
+
+    <!--verbosity -->
+    <!-- NUnit verbosity: Off|Error|Warning|Info|Verbose-->
+    <TestVerbosity Condition="'$(TestVerbosity)' == ''">Warning</TestVerbosity>
     <NunitArgs>/nologo /nodots /noshadow /framework=net-4.0 /domain=single /xml:$(TestResults) /trace=$(TestVerbosity)</NunitArgs>
   </PropertyGroup>
+
   <Target Name="TestWithNunit" DependsOnTargets="PrepareTests">
     <!-- NOTE: this item group is placed inside the target scope
     so it will be evaluated lazy, i.e. after NuGet Package Restore 
@@ -89,6 +86,20 @@
   </Target>
 
   <!-- OpenCover -->
+  <PropertyGroup>
+    <OpenCoverFilter Condition="'$(OpenCoverFilter)' == ''">+[$(AssemblyName)]* -[*]*Tests -[FluentAssertions]*</OpenCoverFilter>
+    <OpenCoverOutput>$(TestResultsDir)$(ProjectName).Coverage.xml</OpenCoverOutput>
+    <!-- exclude generated code -->
+    <!-- [ExcludeFromCodeCoverage] cf.: https://github.com/OpenCover/opencover/issues/195 -->
+    <OpenCoverExcludeAttributes Condition="'$(OpenCoverExcludeAttributes)' == ''">*DebuggerNonUserCode*;*.GeneratedCode*;*.ExcludeFromCodeCoverage*</OpenCoverExcludeAttributes>
+    <CoverageFailOnTargetFail Condition="'$(CoverageFailOnTargetFail)' == ''">true</CoverageFailOnTargetFail>
+    <CoverageReportDir>$(TestResultsDir)coverage\$(ProjectName)</CoverageReportDir>
+    <!--OpenCover verbosity: Off|Fatal|Error|Warn|Info|Debug|Verbose|All -->
+    <CoverageVerbosity Condition="'$(CoverageVerbosity)' == ''">Warn</CoverageVerbosity>
+    <!-- ReportGenerator Verbosity: Verbose|Info|Error -->
+    <CoverageReportVerbosity Condition="'$(CoverageReportVerbosity)' == ''">Error</CoverageReportVerbosity>
+  </PropertyGroup>
+
   <Target Name="OpenCoverWithNUnit" DependsOnTargets="PrepareTests">
     <ItemGroup Condition="'@(NunitConsole)' == ''">
       <NunitConsole Include="$(NUnitPath)"/>
@@ -143,5 +154,12 @@
   </Target>
 
   <!-- import custom user solution targets -->
-  <Import Project="$(SolutionDir)\solution.targets" />
+  <Target Name="EnsureOneClickBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <WarningText>OneClickBuild has not yet been initialized for this solution. Use ...</WarningText>
+    </PropertyGroup>
+    <Warning Condition="!Exists('$(SolutionDir)\solution.targets')" Text="$(WarningText)" />
+  </Target>
+
+  <Import Project="$(SolutionDir)\solution.targets" Condition="Exists('$(SolutionDir)\solution.targets')" />
 </Project>
