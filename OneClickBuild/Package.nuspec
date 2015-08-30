@@ -11,7 +11,7 @@
     <summary>
 This package includes a simple build.bat and MSBuild targets bringing you closer to
 the famous 1-Click-Build. The build.bat shortcuts to MSBuild, the targets include 
-running tests (with NUnit) and computing code coverage (with OpenCover).
+versioning (with GitVersion), running tests (with NUnit) and computing code coverage (with OpenCover).
 The package aims to reduce dependencies on pre-installed external tools by getting
 the runners directly from NuGet. The only thing you need is 
   1) .NET for MSBuild (preinstalled since Windows 7) and
@@ -26,8 +26,8 @@ reduce to the same one-liner you can use in development.
     <dependencies>
       <dependency id="GitVersionTask" version="3.0.2" />
       <dependency id="NUnit.Runners" version="2.6.4" />
-      <dependency id="OpenCover" version="4.5.3723" />
-      <dependency id="ReportGenerator" version="2.1.2.0" />
+      <dependency id="OpenCover" version="4.6.166" />
+      <dependency id="ReportGenerator" version="2.2.0" />
     </dependencies>    
     <references></references>
     <tags>continuous integration</tags>
