@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/qs1cu14tjvh1j0le?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/oneclickbuild) ![NuGet Version](https://img.shields.io/nuget/v/OneClickBuild.svg?style=flat-square) ![NuGet Version](https://img.shields.io/nuget/dt/OneClickBuild.svg?style=flat-square)
+[![Build status](https://ci.appveyor.com/api/projects/status/qs1cu14tjvh1j0le?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/oneclickbuild) ![NuGet Version](https://img.shields.io/nuget/v/OneClickBuild.svg?style=flat-square) ![NuGet Version](https://img.shields.io/nuget/dt/OneClickBuild.svg?style=flat-square) [![Issue Stats](http://issuestats.com/github/awesome-inc/OneClickBuild/badge/pr)](http://issuestats.com/github/awesome-inc/OneClickBuild)
 
 # OneClickBuild
 
@@ -142,9 +142,9 @@ for applications. This presumes that you may have tests included in your product
 - The `Test`-target will look up the `PlatformTarget`-property to use the correct NUnit runner, i.e.
 `nunit-console.exe` for `x64/AnyCPU` or `nunit-console-x86.exe` for `x86` 
 
-- Multiple patterns can be specified like
+- Multiple patterns can be specified with the `TestsProjectPattern`-property, e.g.
 
-	<TestsProjectPattern >$(OutDir)$(AssemblyName).exe;$(OutDir)MyCode*.dll;$(OutDir)3rdParty*.dll</TestsProjectPattern>
+		<TestsProjectPattern >$(OutDir)$(AssemblyName).exe;$(OutDir)MyCode*.dll;$(OutDir)3rdParty*.dll</TestsProjectPattern>
 
 ### Getting Code Coverage (OpenCover)
 
