@@ -40,10 +40,11 @@
   </Target>
 
   <Target Name="DeployWithNuGet" DependsOnTargets="PackageWithNuGet">
+    <Error Condition="'$(Build)' == '0'" Text="Build number not set."/>
     <PropertyGroup>
-      <PackageFile>$(ProjectName.$(GitVersion_MajorMinorPatch).$(Build).nupkg</PackageFile>
+      <PackageFile>$(ProjectName).$(GitVersion_MajorMinorPatch).$(Build).nupkg</PackageFile>
     </PropertyGroup>
-    <Warning Condition="'$(PackageFile)'=='' Or !Exists($(PackageFile))" Text="Skipping target because package file has not been built." />
+    <Warning Condition="!Exists($(PackageFile))" Text="Skipping target because package file has not been built: $(PackageFile)." />
     <!-- To set API key use "NuGet.exe setApiKey <key> -Source <source>" -->
     <Exec Condition="'$(PackageFile)'!='' And Exists($(PackageFile))"
           Command="nuget push $(PackageFile) -Source $(NugetSourceToDeploy)" />
