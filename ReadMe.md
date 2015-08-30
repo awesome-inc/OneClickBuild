@@ -240,34 +240,32 @@ Here is a simplified version of the `Package.nuspec` that is used by `OneClickBu
 
 	<?xml version="1.0"?>
 	<package >
-		<metadata>
-			<id>OneClickBuild</id>
-			<version>$Version$</version>
-			<title>OneClickBuild</title>
-			<authors>mkoertgen,tmentzel</authors>
-			<owners>mkoertgen,tmentzel</owners>
-			<requireLicenseAcceptance>false</requireLicenseAcceptance>
-			<description>Simplify your build, run tests and coverage.</description>
-			<summary>...</summary>
-			<copyright/>
-			<releaseNotes>Revision: $Revision$</releaseNotes>
-			<projectUrl>https://github.com/mkoertgen/OneClickBuild</projectUrl>
-			<dependencies>
-				<dependency id="MSBuildTasks" version="1.4.0.88" />
-				<dependency id="NUnit.Runners" version="2.6.4" />
-				<dependency id="OpenCover" version="4.5.3723" />
-				<dependency id="ReportGenerator" version="2.1.2.0" />
-			</dependencies>    
-			<references></references>
-			<tags>continuous integration</tags>
-		</metadata>
-		<files>
-			<file src="tools\*" target="tools" />
-			<file src="..\ReadMe.md" target="content\OneClickBuild.ReadMe.md" />
-			<!-- Automatically Displaying a NextSteps During Package Installation, cf.:
-				http://docs.nuget.org/docs/creating-packages/creating-and-publishing-a-package#Automatically_Displaying_a_Readme.txt_File_During_Package_Installation -->
-			<file src="tools\NextSteps.OneClickBuild.md" target="" />
-		</files>
+	  <metadata>
+		<id>OneClickBuild</id>
+		<version>$Version$</version>
+		<title>OneClickBuild</title>
+		<authors>mkoertgen,tmentzel</authors>
+		<owners>mkoertgen,tmentzel</owners>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>Simplify your build, run tests and coverage.</description>
+		<summary>...</summary>
+		<copyright/>
+		<releaseNotes>Revision: $Revision$</releaseNotes>
+		<projectUrl>https://github.com/mkoertgen/OneClickBuild</projectUrl>
+		<dependencies>
+	      <dependency id="GitVersionTask" version="3.0.2" />
+	      <dependency id="NUnit.Runners" version="2.6.4" />
+	      <dependency id="OpenCover" version="4.6.166" />
+	      <dependency id="ReportGenerator" version="2.2.0" />
+		</dependencies>    
+		<references></references>
+		<tags>continuous integration</tags>
+	  </metadata>
+	  <files>
+	    <file src="tools\*" target="tools" />
+	    <file src="build\*" target="build" />
+	    <file src="readme.txt" target="" />
+	  </files>
 	</package>
 
 ### Continuous Inspection (SonarQube)
