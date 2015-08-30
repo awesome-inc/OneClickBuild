@@ -1,17 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-	<PropertyGroup>
-		<!-- TODO: Adjust version -->
-		<PackageVersion>1.0.0.$(Build)</PackageVersion>
-  </PropertyGroup>
-
   <ItemGroup>
      <Compile Include="$(SolutionDir)SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
-    </Compile>
-    <Compile Include="$(SolutionDir)VersionInfo.g.cs">
-      <Link>Properties\VersionInfo.g.cs</Link>
     </Compile>
   </ItemGroup>
   

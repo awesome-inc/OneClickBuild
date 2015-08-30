@@ -23,6 +23,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{73075679-9D33-4F3E-8ED4-73261F88F90B}"
 	ProjectSection(SolutionItems) = preProject
 		build.bat = build.bat
+		.build\OneClickBuild.targets = .build\OneClickBuild.targets
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneClickBuild", "OneClickBuild\OneClickBuild.csproj", "{02B527C6-BE5E-4245-8B08-6D11E5825986}"

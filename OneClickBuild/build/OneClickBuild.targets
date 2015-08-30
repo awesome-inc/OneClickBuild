@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Target Name="Version" DependsOnTargets="UpdateAssemblyInfo" />
+  <Target Name="Version" BeforeTargets="BeforeBuild" DependsOnTargets="VersionWithGit" />
   <Target Name="Test" DependsOnTargets="Build;TestWithNunit"/>
   <Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithNUnit"/>
   <Target Name="CoverageReport" DependsOnTargets="Coverage;OpenCoverReport"/>
@@ -18,7 +18,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <MSBuildCommunityTasksPath>$(SolutionDir).build</MSBuildCommunityTasksPath>
     <TestsProjectPattern Condition="'$(TestsProjectPattern)' == '' And $(OutputType.EndsWith('Exe'))">$(OutDir)$(AssemblyName).exe</TestsProjectPattern>
     <TestsProjectPattern Condition="'$(TestsProjectPattern)' == '' And '$(OutputType)' == 'Library'">$(OutDir)$(AssemblyName).dll</TestsProjectPattern>
     <TestResultsDir Condition="'$(TestResultsDir)' == ''">$(SolutionDir)testresults\</TestResultsDir>
@@ -46,16 +45,26 @@
   
   </PropertyGroup>
 
+  <!--Git Versioning -->
+  <Target Name="VersionWithGit">
+    <GitVersionTask.GetVersion SolutionDirectory="$(SolutionDir)" />
+  </Target>
+  
   <!-- NuGet Packaging -->
-  <Target Name="PackageWithNuGet" DependsOnTargets="Build">
+  <Target Name="PackageWithNuGet" DependsOnTargets="Build;Version">
+    <PropertyGroup>
+      <PackageVersion>$(GitVersion_MajorMinorPatch).$(Build)</PackageVersion>
+      <Revision>$(GitVersion_Sha)</Revision>
+    </PropertyGroup>
+  
     <Warning Condition="!Exists($(NuspecFile))" Text="Skipping target because .nuspec-file is missing (expected '$(NuspecFile)')" />
     <Exec Condition="Exists($(NuspecFile))"
-          Command="nuget pack $(NuspecFile) -Properties Version=$(NuGetVersionV2);Revision=$(Sha);Configuration=$(Configuration)"/>
+          Command="nuget pack $(NuspecFile) -Properties Version=$(PackageVersion);Revision=$(Revision);Configuration=$(Configuration)"/>
   </Target>
 
   <Target Name="DeployWithNuGet" DependsOnTargets="PackageWithNuGet">
     <PropertyGroup>
-      <PackageFile>$(ProjectName.$(NuGetVersionV2).nupkg)</PackageFile>
+      <PackageFile>$(ProjectName.$(GitVersion_MajorMinorPatch).$(Build).nupkg</PackageFile>
     </PropertyGroup>
     <Warning Condition="'$(PackageFile)'=='' Or !Exists($(PackageFile))" Text="Skipping target because package file has not been built." />
     <!-- To set API key use "NuGet.exe setApiKey <key> -Source <source>" -->
@@ -132,9 +141,6 @@
     <MakeDir Directories="$(CoverageReportDir)" Condition="!Exists($(CoverageReportDir))"/>
     <Delete Files="$(CoverageReportDir)" />
   </Target>
-
-  <!-- import msbuild tasks -->
-  <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets" />
 
   <!-- import custom user solution targets -->
   <Import Project="$(SolutionDir)\solution.targets" />
