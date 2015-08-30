@@ -62,7 +62,6 @@ To clean and build a specific project type
 
 The version number is generated during the build process according to  [Semantic Versioning](http://semver.org/) augmented by 
 
-
 - the *build number* from [CI](http://en.wikipedia.org/wiki/Continuous_integration) and
 - the *revision number* of the [SCM](http://en.wikipedia.org/wiki/Software_configuration_management).
 
@@ -75,16 +74,17 @@ with
 - **major**: Manually incremented for major releases with breaking changes such as adding many new features to the solution or a new architectural design.
 - **minor**: Manually incremented for minor releases, such as regular feature implementations (backwards-compatible).
 - **patch**: Manually incremented for bug fixes or single and simple feature implementations (backwards-compatible).
-- **build**: Automatically set by the continous build server.
-- **revision**: Automatically set by the build process (client and server) to reflect the source code revision the build is based on
+- **build**: Automatically set by the continuous build server ([Jenkins](https://jenkins-ci.org/) and [Appveyor](http://www.appveyor.com/) supported).
+- **revision**: Automatically set by the build process (client and server) to reflect the source code revision the build is based on. Done with [Gitversion](https://github.com/GitTools/GitVersion).
 
-The first three version parts need to be set in `solution.targets`.
+The first three version parts should be set in `GitVersionConfig.yaml`.
+See [GitVersion Usage](http://gitversion.readthedocs.org/en/latest/usage/) for more details.
 
 ### Including version number to your project
 
-Most solution wide settings for all assemblies are stored in `SolutionInfo.cs` except of the version information, which is defined in `solution.targets` and generated into `VersionInfo.g.cs`.
+Most solution wide settings for all assemblies are stored in `SolutionInfo.cs` except of the version information, which is integrated with [GitVersion](https://github.com/GitTools/GitVersion).
 
-To include the solution wide properties, the items `SolutionInfo.cs` and `VersionInfo.g.cs` from the solution root need to be *added as link* into your project root and moved to the properties folder. After that, the original `AssemblyInfo.cs` needs to be stripped down to the following two default attributes:
+After installing `OneClickBuild` you need to strip down your original `Properties\AssemblyInfo.cs` down to the following two default attributes:
 
 	[assembly: AssemblyTitle("MyLib")]
 	[assembly: Guid("22669957-af00-4154-9ec9-633664d5d29b")]
@@ -329,3 +329,7 @@ The full error message should read something like this
 
 You may have set `ProjectDependencies` in your solution file which you should remove, cf.:
 [Building .net 4.0 web sites: .metaproj -files (Social MSDN)](http://social.msdn.microsoft.com/Forums/vstudio/en-US/562ae95f-e042-45c2-9821-62cac49d0152/building-net-40-web-sites-metaproj-files?forum=msbuild)
+
+### 'Test' target fails on Windows 10 with exit code -2146232576.
+
+NUnit runners need .NET 3.5 so you need to turn on this Windows Feature. 

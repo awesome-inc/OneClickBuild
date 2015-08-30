@@ -39,5 +39,4 @@ if not "%cd%\"=="%solutionDir%" (
 NuGet.exe restore -source "%PackageSources%"
 
 :build
-echo %DATE% %TIME% > .build\build.stamp.cache
-"%msbuild%" %* /p:CustomBeforeMicrosoftCommonTargets="%solutionDir%.build\empty.targets"
+"%msbuild%" %* /p:CustomBeforeMicrosoftCommonTargets="%solutionDir%empty.targets"

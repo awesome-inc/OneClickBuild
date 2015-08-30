@@ -35,5 +35,6 @@ reduce to the same one-liner you can use in development.
   <files>
     <file src="tools\*" target="tools" />
     <file src="build\*" target="build" />
+    <file src="readme.txt" target="" />
   </files>
 </package>

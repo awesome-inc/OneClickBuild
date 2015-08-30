@@ -17,13 +17,6 @@
     <Build Condition="'$(Build)' == ''">0</Build>
   </PropertyGroup>
 
-  <!-- solution wide assembly info -->
-  <ItemGroup>
-    <Compile Include="$(SolutionDir)SolutionInfo.cs">
-      <Link>Properties\SolutionInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-
   <!--Git Versioning -->
   <Target Name="VersionWithGit">
     <GitVersionTask.GetVersion SolutionDirectory="$(SolutionDir)" />
