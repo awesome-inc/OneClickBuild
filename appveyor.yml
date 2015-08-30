@@ -13,7 +13,7 @@
   before_build:
   - nuget setapikey %apiKey% -Verbosity quiet
   build_script:
-  - build.bat OneClickBuild.sln /t:Deploy /v:m
+  - build.bat OneClickBuild\OneClickBuild.csproj /t:Deploy /v:m
 #  after_build:
 #  - ps: >-
 #      $wc = New-Object 'System.Net.WebClient'
@@ -27,7 +27,7 @@
   nuget:
     disable_publish_on_pr: true
   build_script:
-  - build.bat OneClickBuild.sln /t:Package /v:m
+  - build.bat OneClickBuild\OneClickBuild.csproj /t:Package /v:m
  # after_build:
  # - ps: >-
  #     $wc = New-Object 'System.Net.WebClient'
