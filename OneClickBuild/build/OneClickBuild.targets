@@ -85,6 +85,7 @@
     <!-- exclude generated code -->
     <!-- [ExcludeFromCodeCoverage] cf.: https://github.com/OpenCover/opencover/issues/195 -->
     <OpenCoverExcludeAttributes Condition="'$(OpenCoverExcludeAttributes)' == ''">*DebuggerNonUserCode*;*.GeneratedCode*;*.ExcludeFromCodeCoverage*</OpenCoverExcludeAttributes>
+    <OpenCoverExcludeFiles Condition="'$(OpenCoverExcludeFiles)' == ''">*\*.g.cs</OpenCoverExcludeFiles>
     <CoverageFailOnTargetFail Condition="'$(CoverageFailOnTargetFail)' == ''">true</CoverageFailOnTargetFail>
     <CoverageReportDir>$(TestResultsDir)coverage\$(ProjectName)</CoverageReportDir>
     <!--OpenCover verbosity: Off|Fatal|Error|Warn|Info|Debug|Verbose|All -->
@@ -98,14 +99,14 @@
       <NunitConsole Include="$(NUnitPath)"/>
     </ItemGroup>
     <ItemGroup>
-      <OpenCoverConsole Include="$(SolutionDir)packages\OpenCover.*\OpenCover.Console.exe"/>
+      <OpenCoverConsole Include="$(SolutionDir)packages\OpenCover.*\tools\OpenCover.Console.exe"/>
     </ItemGroup>
     <PropertyGroup>
       <!-- Skip register profiler per user if run by System account -->
       <RegisterProfiler Condition="!$(USERPROFILE.EndsWith('systemprofile'))">-register:user</RegisterProfiler>
       <RegisterProfiler Condition="$(USERPROFILE.EndsWith('systemprofile'))">-register</RegisterProfiler>
       <ReturnTargetCode Condition="'$(CoverageFailOnTargetFail)' == 'true'">-returntargetcode</ReturnTargetCode>
-      <OpenCoverArgs>$(RegisterProfiler) -filter:&quot;$(OpenCoverFilter)&quot; -output:&quot;$(OpenCoverOutput)&quot; -nodefaultfilters -mergebyhash -skipautoprops $(ReturnTargetCode) -excludebyattribute:&quot;$(OpenCoverExcludeAttributes)&quot; -log:$(CoverageVerbosity)</OpenCoverArgs>
+      <OpenCoverArgs>$(RegisterProfiler) -filter:&quot;$(OpenCoverFilter)&quot; -output:&quot;$(OpenCoverOutput)&quot; -nodefaultfilters -mergebyhash -skipautoprops $(ReturnTargetCode) -excludebyattribute:&quot;$(OpenCoverExcludeAttributes)&quot; -excludebyfile:&quot;$(OpenCoverExcludeFiles)&quot; -log:$(CoverageVerbosity)</OpenCoverArgs>
     </PropertyGroup>
 
     <Warning Condition="'@(TestAssemblies)' == ''" Text="Skipping target since no test assemblies to cover" />
@@ -120,7 +121,7 @@
       <ReportGeneratorArgs>-reports:$(OpenCoverOutput) -targetdir:$(CoverageReportDir) -verbosity:$(CoverageReportVerbosity)</ReportGeneratorArgs>
     </PropertyGroup>
     <ItemGroup>
-      <ReportGenerator Include="$(SolutionDir)packages\ReportGenerator.*\ReportGenerator.exe"/>
+      <ReportGenerator Include="$(SolutionDir)packages\ReportGenerator.*\tools\ReportGenerator.exe"/>
     </ItemGroup>
 
     <Warning Condition="'@(TestAssemblies)' == ''" Text="Skipping target since no test assemblies to report coverage on" />
