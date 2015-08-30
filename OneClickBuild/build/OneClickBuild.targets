@@ -63,7 +63,7 @@
     <!--verbosity -->
     <!-- NUnit verbosity: Off|Error|Warning|Info|Verbose-->
     <TestVerbosity Condition="'$(TestVerbosity)' == ''">Warning</TestVerbosity>
-    <NunitArgs>/nologo /nodots /noshadow /framework=net-4.0 /domain=single /xml:$(TestResults) /trace=$(TestVerbosity)</NunitArgs>
+    <NunitArgs>/nologo /nodots /noshadow /framework=net-4.0 /domain=single /trace=$(TestVerbosity)</NunitArgs>
   </PropertyGroup>
 
   <Target Name="TestWithNunit" DependsOnTargets="PrepareTests">
@@ -75,7 +75,7 @@
     </ItemGroup>
     <Warning Condition="'@(TestAssemblies)' == ''" Text="Skipping target since no test assemblies" />
     <Exec Condition="'@(TestAssemblies)' != ''" WorkingDirectory="$(OutDir)"
-          Command="@(NunitConsole->'%(FullPath)') $(NunitArgs) @(TestAssemblies, ' ')" />
+          Command="&quot;@(NunitConsole->'%(FullPath)')&quot; $(NunitArgs) /xml:&quot;$(TestResults)&quot; @(TestAssemblies, ' ')" />
   </Target>
 
   <!-- OpenCover -->
@@ -111,7 +111,7 @@
 
     <Warning Condition="'@(TestAssemblies)' == ''" Text="Skipping target since no test assemblies to cover" />
     <Exec Condition="'@(TestAssemblies)' != ''" WorkingDirectory="$(OutDir)" IgnoreStandardErrorWarningFormat="true"
-          Command="@(OpenCoverConsole->'%(FullPath)') $(OpenCoverArgs) -target:&quot;@(NunitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(NunitArgs) @(TestAssemblies, ' ')&quot;"
+          Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(NunitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(NunitArgs) /xml:\&quot;$(TestResults)\&quot; @(TestAssemblies, ' ')&quot;"
           />
   </Target>
 
