@@ -3,7 +3,7 @@
   branches:
     only:
       - master
-  version: 1.4.2.{build}
+  version: 1.5.0.{build}
   test: off
   nuget:
     disable_publish_on_pr: true
@@ -22,7 +22,7 @@
 
 # all other branches
 -
-  version: 1.4.2.{build}
+  version: 1.5.0.{build}
   test: off
   nuget:
     disable_publish_on_pr: true
