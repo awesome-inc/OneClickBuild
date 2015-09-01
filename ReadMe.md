@@ -253,7 +253,7 @@ Here is a simplified version of the `Package.nuspec` that is used by `OneClickBu
 		<releaseNotes>Revision: $Revision$</releaseNotes>
 		<projectUrl>https://github.com/mkoertgen/OneClickBuild</projectUrl>
 		<dependencies>
-	      <dependency id="GitVersionTask" version="3.0.2" />
+	      <dependency id="GitVersionTask" version="3.1.1" />
 	      <dependency id="NUnit.Runners" version="2.6.4" />
 	      <dependency id="OpenCover" version="4.6.166" />
 	      <dependency id="ReportGenerator" version="2.2.0" />
