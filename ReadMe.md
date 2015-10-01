@@ -67,7 +67,11 @@ The version number is generated during the build process according to  [Semantic
 
 The pattern is
 
-	<major>.<minor>.<patch>.<build>.<revision>
+	<major>.<minor>.<patch>.<build>
+
+or, respectively
+
+	<major>.<minor>.<patch>-<metadata>
 
 with
 
@@ -75,14 +79,16 @@ with
 - **minor**: Manually incremented for minor releases, such as regular feature implementations (backwards-compatible).
 - **patch**: Manually incremented for bug fixes or single and simple feature implementations (backwards-compatible).
 - **build**: Automatically set by the continuous build server ([Jenkins](https://jenkins-ci.org/) and [Appveyor](http://www.appveyor.com/) supported).
-- **revision**: Automatically set by the build process (client and server) to reflect the source code revision the build is based on. Done with [Gitversion](https://github.com/GitTools/GitVersion).
+- **metadata**: Automatically set by the build process (client and server) to reflect properties specific to the build (not the release!). Since recently, we delegated this to [Gitversion](https://github.com/GitTools/GitVersion).
 
-The first three version parts should be set in `GitVersionConfig.yaml`.
+When using git workflows like [GitFlow](http://nvie.com/posts/a-successful-git-branching-model/) or [GitHubFlow](http://scottchacon.com/2011/08/31/github-flow.html) then versioning is automated and you will almost never need to set a version anywhere in your project files.
+
+However, if you really need to, you can set the semantic version of your project explicitly in `GitVersionConfig.yaml`.
 See [GitVersion Usage](http://gitversion.readthedocs.org/en/latest/usage/) for more details.
 
 ### Including version number to your project
 
-Most solution wide settings for all assemblies are stored in `SolutionInfo.cs` except of the version information, which is integrated with [GitVersion](https://github.com/GitTools/GitVersion).
+Most solution wide settings for all assemblies are stored in `SolutionInfo.cs` except of the version information, which is included using [GitVersion](https://github.com/GitTools/GitVersion).
 
 After installing `OneClickBuild` you need to strip down your original `Properties\AssemblyInfo.cs` down to the following two default attributes:
 
