@@ -1,12 +1,87 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- MSBuildTasks -->
+
+  <Target Name="SetClickOnceVersion" BeforeTargets="GenerateDeploymentManifest" DependsOnTargets="UpdateAssemblyInfo">
+    <CreateProperty Value="$(GitVersion_MajorMinorPatch).$(Build)">
+      <Output TaskParameter="Value" PropertyName="ApplicationVersion"/>
+    </CreateProperty>
+  </Target>
+  
+  <Target Name="Deploy" DependsOnTargets="SetClickOnceVersion;Publish">
+    <Message Text="Deployed '$(ProjectName) - $(ApplicationVersion)' to '$(PublishDir)'" Importance="High"/>
+  </Target>
+
   <PropertyGroup>
     <CoverageFailOnTargetFail>false</CoverageFailOnTargetFail>
   </PropertyGroup>
 
-  <Target Name="Deploy">
-    <Message Text="Skipping 'Deploy' for $(ProjectName)" Importance="High" />
-  </Target>
+  <PropertyGroup>
+    <BuildDir Condition="'$(BuildDir)' == ''">$(SolutionDir)publish</BuildDir>
+    <BuildDir Condition="'$(BuildDir)' == ''">publish</BuildDir>
+
+    <PublishDir>$(BuildDir)\$(ProjectName)\</PublishDir>
+    <PublishUrl>$(BuildUrl)/$(ProjectName)/</PublishUrl>
+
+    <Install>true</Install>
+    <!-- Web, Disk -->
+    <InstallFrom>Disk</InstallFrom>
+
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Background</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>true</UpdateRequired>
+
+    <MapFileExtensions>false</MapFileExtensions>
+
+    <InstallUrl>$(PublishUrl)</InstallUrl>
+    <UpdateUrl>$(PublishUrl)</UpdateUrl>
+    <SupportUrl>https://github.com/ThomasMentzel/NZazu</SupportUrl>
+
+    <ProductName>$(ProjectName)</ProductName>
+    <PublisherName>Awesome Inc.</PublisherName>
+    <!--     <SuiteName>OneClickBuild</SuiteName> -->
+
+    <MinimumRequiredVersion>0.1.0.0</MinimumRequiredVersion>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>publish.htm</WebPage>
+    <TrustUrlParameters>true</TrustUrlParameters>
+    <UseApplicationTrust>true</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <ExcludeDeploymentUrl>true</ExcludeDeploymentUrl>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+
+    <BootstrapperEnabled>false</BootstrapperEnabled>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <BootstrapperComponentsLocation>Relative</BootstrapperComponentsLocation>
+
+    <!-- 
+    FileAssociations
+    DisallowUrlActivation
+    ErrorReportUrl
+    OpenBrowserOnPublish - false
+    -->
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+
 
 </Project>
