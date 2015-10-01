@@ -37,7 +37,7 @@
 
     <InstallUrl>$(PublishUrl)</InstallUrl>
     <UpdateUrl>$(PublishUrl)</UpdateUrl>
-    <SupportUrl>https://github.com/ThomasMentzel/NZazu</SupportUrl>
+    <SupportUrl>https://github.com/awesome-inc/OneClickBuild</SupportUrl>
 
     <ProductName>$(ProjectName)</ProductName>
     <PublisherName>Awesome Inc.</PublisherName>
