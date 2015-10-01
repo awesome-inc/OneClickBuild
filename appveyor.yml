@@ -14,7 +14,7 @@
     apiKey:
       secure: lrwREUV4nO99AU0A6xVx/MNF0BaJc8A1B8dwEGMLqmYKGqD5E7PJ/IC9RHcle6pk
   before_build:
-    - ps: gitversion /l console /output buildserver /updateAssemblyInfo
+    - ps: gitversion /l console /output buildserver
     - nuget setapikey %apiKey% -Verbosity quiet
   build_script:
     - build.bat OneClickBuild\OneClickBuild.csproj /t:Deploy /v:m
@@ -34,7 +34,7 @@
   nuget:
     disable_publish_on_pr: true
   before_build:
-    - ps: gitversion /l console /output buildserver /updateAssemblyInfo
+    - ps: gitversion /l console /output buildserver
   build_script:
     - build.bat OneClickBuild\OneClickBuild.csproj /t:Package /v:m
  # after_build:
