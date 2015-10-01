@@ -1,12 +1,55 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!-- MSBuildTasks -->
+
+  <Target Name="SetClickOnceVersion" BeforeTargets="GenerateDeploymentManifest" DependsOnTargets="UpdateAssemblyInfo">
+    <CreateProperty Value="$(GitVersion_MajorMinorPatch).$(Build)">
+      <Output TaskParameter="Value" PropertyName="ApplicationVersion"/>
+    </CreateProperty>
+  </Target>
+  
+  <Target Name="Deploy" DependsOnTargets="SetClickOnceVersion;Publish">
+    <Message Text="Deployed '$(ProjectName) - $(ApplicationVersion)' to '$(PublishDir)'" Importance="High"/>
+  </Target>
+
   <PropertyGroup>
     <CoverageFailOnTargetFail>false</CoverageFailOnTargetFail>
   </PropertyGroup>
 
-  <Target Name="Deploy">
-    <Message Text="Skipping 'Deploy' for $(ProjectName)" Importance="High" />
-  </Target>
+  <PropertyGroup>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishDir>publish\</PublishDir>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+
 
 </Project>
