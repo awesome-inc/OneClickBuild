@@ -43,7 +43,7 @@
   <Target Name="DeployWithNuGet" DependsOnTargets="PackageWithNuGet">
     <Error Condition="'$(Build)' == '0'" Text="Build number not set."/>
     <PropertyGroup>
-      <PackageId Condition="'$(PackageId)'==''>$(GitVersion_MajorMinorPatch).$(Build)</PackageId>
+      <PackageId Condition="'$(PackageId)'==''">$(GitVersion_MajorMinorPatch).$(Build)</PackageId>
       <PackageName Condition="'$(PackageName)'=='' And Exists('$(ProjectName).$(PackageId).nupkg')">$(ProjectName)</PackageName>
       <PackageName Condition="'$(PackageName)'=='' And Exists('$(AssemblyName).$(PackageId).nupkg')">$(AssemblyName)</PackageName>
       <PackageName Condition="'$(PackageName)'=='' And Exists('$(RootNamespace).$(PackageId).nupkg')">$(RootNamespace)</PackageName>
