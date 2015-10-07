@@ -6,7 +6,7 @@
   <Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithNUnit"/>
   <Target Name="CoverageReport" DependsOnTargets="Coverage;OpenCoverReport"/>
   <Target Name="Package" DependsOnTargets="Build;PackageWithNuGet"/>
-  <Target Name="Deploy" DependsOnTargets="Build;DeployWithNuGet"/>
+  <Target Name="Deploy" DependsOnTargets="Build;Package;DeployWithNuGet"/>
 
   <PropertyGroup>
     <!-- Use AppVeyor Build-Number, cf.: http://www.appveyor.com/docs/environment-variables -->
