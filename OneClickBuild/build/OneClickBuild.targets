@@ -15,6 +15,7 @@
     <Build Condition="'$(BUILD_NUMBER)' != ''">$(BUILD_NUMBER)</Build>
     <!-- Fallback to "0" if still not set -->
     <Build Condition="'$(Build)' == ''">0</Build>
+    
   </PropertyGroup>
 
   <!--Git Versioning -->
@@ -42,7 +43,11 @@
   <Target Name="DeployWithNuGet" DependsOnTargets="PackageWithNuGet">
     <Error Condition="'$(Build)' == '0'" Text="Build number not set."/>
     <PropertyGroup>
-      <PackageFile>$(ProjectName).$(GitVersion_MajorMinorPatch).$(Build).nupkg</PackageFile>
+      <PackageId Condition="'$(PackageId)'==''>$(GitVersion_MajorMinorPatch).$(Build)</PackageId>
+      <PackageName Condition="'$(PackageName)'=='' And Exists('$(ProjectName).$(PackageId).nupkg')">$(ProjectName)</PackageName>
+      <PackageName Condition="'$(PackageName)'=='' And Exists('$(AssemblyName).$(PackageId).nupkg')">$(AssemblyName)</PackageName>
+      <PackageName Condition="'$(PackageName)'=='' And Exists('$(RootNamespace).$(PackageId).nupkg')">$(RootNamespace)</PackageName>
+      <PackageFile>$(PackageName).$(PackageId).nupkg</PackageFile>
     </PropertyGroup>
     <Warning Condition="!Exists($(PackageFile))" Text="Skipping target because package file has not been built: $(PackageFile)." />
     <!-- To set API key use "NuGet.exe setApiKey <key> -Source <source>" -->
