@@ -35,7 +35,7 @@
       <Revision>$(GitVersion_Sha)</Revision>
     </PropertyGroup>
 
-    <Warning Condition="!Exists($(NuspecFile))" Text="Skipping target because .nuspec-file is missing (expected '$(NuspecFile)')" />
+    <Message Importance="Normal" Condition="!Exists($(NuspecFile))" Text="Skipping target because .nuspec-file is missing (expected '$(NuspecFile)')" />
     <Exec Condition="Exists($(NuspecFile))"
           Command="nuget pack $(NuspecFile) -Properties Version=$(PackageVersion);Revision=$(Revision);Configuration=$(Configuration)"/>
   </Target>
