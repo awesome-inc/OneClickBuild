@@ -49,10 +49,11 @@
       <PackageName Condition="'$(PackageName)'=='' And Exists('$(RootNamespace).$(PackageId).nupkg')">$(RootNamespace)</PackageName>
       <PackageFile>$(PackageName).$(PackageId).nupkg</PackageFile>
     </PropertyGroup>
-    <Warning Condition="!Exists($(PackageFile))" Text="Skipping target because package file has not been built: $(PackageFile)." />
+    <Message Condition="!Exists($(PackageFile))" Text="Skipping target because package file has not been built for project $(ProjectName)." Importance="Normal"  />
     <!-- To set API key use "NuGet.exe setApiKey <key> -Source <source>" -->
+    <Message Condition="'$(PackageFile)'!='' And Exists($(PackageFile))" Text="Pushing package $(PackageFile) to $(NugetSourceToDeploy)." Importance="High"  />
     <Exec Condition="'$(PackageFile)'!='' And Exists($(PackageFile))"
-          Command="nuget push $(PackageFile) -Source $(NugetSourceToDeploy)" />
+          Command="nuget push $(PackageFile) -Source $(NugetSourceToDeploy) > NUL" />
   </Target>
 
 
