@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Target Name="Version" BeforeTargets="BeforeBuild" DependsOnTargets="VersionWithGit" />
+  <Target Name="Version" BeforeTargets="BeforeBuild" DependsOnTargets="UpdateVersionProperties"/>
   <Target Name="Test" DependsOnTargets="Build;TestWithNunit"/>
   <Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithNUnit"/>
   <Target Name="CoverageReport" DependsOnTargets="Coverage;OpenCoverReport"/>
@@ -15,48 +15,42 @@
     <Build Condition="'$(BUILD_NUMBER)' != ''">$(BUILD_NUMBER)</Build>
     <!-- Fallback to "0" if still not set -->
     <Build Condition="'$(Build)' == ''">0</Build>
-    
+
+    <NuspecFile Condition="'$(NuspecFile)'==''">$(ProjectDir)Package.nuspec</NuspecFile>
+
   </PropertyGroup>
 
-  <!--Git Versioning -->
-  <Target Name="VersionWithGit">
-    <GitVersionTask.GetVersion SolutionDirectory="$(SolutionDir)" />
-  </Target>
+  <Target Name="UpdateVersionProperties" DependsOnTargets="UpdateAssemblyInfo" />
 
   <!-- NuGet Packaging -->
-  <PropertyGroup>
-    <NuspecFile Condition="'$(NuspecFile)'==''">$(ProjectDir)Package.nuspec</NuspecFile>
-    <NugetSourceToDeploy Condition="'$(NugetSourceToDeploy)'==''">https://www.nuget.org</NugetSourceToDeploy>
-  </PropertyGroup>
-
-  <Target Name="PackageWithNuGet" DependsOnTargets="Build;Version">
+  <Target Name="PackageWithNuGet" DependsOnTargets="Build">
     <PropertyGroup>
-      <PackageVersion>$(GitVersion_MajorMinorPatch).$(Build)</PackageVersion>
       <Revision>$(GitVersion_Sha)</Revision>
     </PropertyGroup>
 
     <Message Importance="Normal" Condition="!Exists($(NuspecFile))" Text="Skipping target because .nuspec-file is missing (expected '$(NuspecFile)')" />
     <Exec Condition="Exists($(NuspecFile))"
-          Command="nuget pack $(NuspecFile) -Properties Version=$(PackageVersion);Revision=$(Revision);Configuration=$(Configuration)"/>
+          Command="nuget pack $(NuspecFile) -Properties Version=$(GitVersion_MajorMinorPatch).$(Build);Revision=$(Revision);Configuration=$(Configuration)"/>
   </Target>
 
   <Target Name="DeployWithNuGet" DependsOnTargets="PackageWithNuGet">
     <Error Condition="'$(Build)' == '0'" Text="Build number not set."/>
+
     <PropertyGroup>
+      <NugetSourceToDeploy Condition="'$(NugetSourceToDeploy)'==''">https://www.nuget.org</NugetSourceToDeploy>
       <PackageId Condition="'$(PackageId)'==''">$(GitVersion_MajorMinorPatch).$(Build)</PackageId>
       <PackageName Condition="'$(PackageName)'=='' And Exists('$(ProjectName).$(PackageId).nupkg')">$(ProjectName)</PackageName>
       <PackageName Condition="'$(PackageName)'=='' And Exists('$(AssemblyName).$(PackageId).nupkg')">$(AssemblyName)</PackageName>
       <PackageName Condition="'$(PackageName)'=='' And Exists('$(RootNamespace).$(PackageId).nupkg')">$(RootNamespace)</PackageName>
       <PackageFile>$(PackageName).$(PackageId).nupkg</PackageFile>
     </PropertyGroup>
-    <Message Condition="!Exists($(PackageFile))" Text="Skipping target because package file has not been built for project $(ProjectName)." Importance="Normal"  />
+    
+    <Message Condition="!Exists($(PackageFile))" Text="Skipping target because package file has not been built for project $(ProjectName)" Importance="Normal"  />
     <!-- To set API key use "NuGet.exe setApiKey <key> -Source <source>" -->
-    <Message Condition="'$(PackageFile)'!='' And Exists($(PackageFile))" Text="Pushing package $(PackageFile) to $(NugetSourceToDeploy)." Importance="High"  />
+    <Message Condition="'$(PackageFile)'!='' And Exists($(PackageFile))" Text="Pushing package $(PackageFile) to $(NugetSourceToDeploy)" Importance="High"  />
     <Exec Condition="'$(PackageFile)'!='' And Exists($(PackageFile))"
           Command="nuget push $(PackageFile) -Source $(NugetSourceToDeploy) > NUL" />
   </Target>
-
-
 
   <!-- NUnit -->
   <PropertyGroup>
