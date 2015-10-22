@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Target Name="Version" BeforeTargets="BeforeBuild" DependsOnTargets="UpdateVersionProperties"/>
   <Target Name="Test" DependsOnTargets="Build;TestWithNunit"/>
   <Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithNUnit"/>
   <Target Name="CoverageReport" DependsOnTargets="Coverage;OpenCoverReport"/>
@@ -20,7 +19,6 @@
 
   </PropertyGroup>
 
-  <Target Name="UpdateVersionProperties" DependsOnTargets="UpdateAssemblyInfo" />
 
   <!-- NuGet Packaging -->
   <Target Name="PackageWithNuGet" DependsOnTargets="Build">
