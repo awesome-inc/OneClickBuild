@@ -1,4 +1,7 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/qs1cu14tjvh1j0le?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/oneclickbuild) ![NuGet Version](https://img.shields.io/nuget/v/OneClickBuild.svg?style=flat-square) ![NuGet Version](https://img.shields.io/nuget/dt/OneClickBuild.svg?style=flat-square) [![Issue Stats](http://issuestats.com/github/awesome-inc/OneClickBuild/badge/pr)](http://issuestats.com/github/awesome-inc/OneClickBuild)
+[![Build status](https://ci.appveyor.com/api/projects/status/qs1cu14tjvh1j0le?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/oneclickbuild)
+![NuGet Version](https://img.shields.io/nuget/v/OneClickBuild.svg?style=flat-square) 
+![NuGet Version](https://img.shields.io/nuget/dt/OneClickBuild.svg?style=flat-square) 
+[![Issue Stats](http://issuestats.com/github/awesome-inc/OneClickBuild/badge/pr)](http://issuestats.com/github/awesome-inc/OneClickBuild)
 
 # OneClickBuild
 
@@ -337,3 +340,4 @@ You may have set `ProjectDependencies` in your solution file which you should re
 ### 'Test' target fails on Windows 10 with exit code -2146232576.
 
 NUnit runners need .NET 3.5 so you need to turn on this Windows Feature. 
+
