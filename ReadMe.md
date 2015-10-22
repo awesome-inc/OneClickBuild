@@ -1,4 +1,7 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/qs1cu14tjvh1j0le?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/oneclickbuild) ![NuGet Version](https://img.shields.io/nuget/v/OneClickBuild.svg?style=flat-square) ![NuGet Version](https://img.shields.io/nuget/dt/OneClickBuild.svg?style=flat-square) [![Issue Stats](http://issuestats.com/github/awesome-inc/OneClickBuild/badge/pr)](http://issuestats.com/github/awesome-inc/OneClickBuild)
+[![Build status](https://ci.appveyor.com/api/projects/status/qs1cu14tjvh1j0le?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/oneclickbuild)
+![NuGet Version](https://img.shields.io/nuget/v/OneClickBuild.svg?style=flat-square) 
+![NuGet Version](https://img.shields.io/nuget/dt/OneClickBuild.svg?style=flat-square) 
+[![Issue Stats](http://issuestats.com/github/awesome-inc/OneClickBuild/badge/pr)](http://issuestats.com/github/awesome-inc/OneClickBuild)
 
 # OneClickBuild
 
@@ -20,13 +23,54 @@ The package aims to reduce dependencies on pre-installed external tools by getti
 A new member coming to your team does not require any special tooling to compile, run tests, etc.
 This makes it also perfectly suitable for continuous integration since your build jobs reduce to the same one-liner you can use in development.
 
-## Download
+## Getting started
 
 The OneClickBuild package is available via package name `OneClickBuild`.
 To install OneClickBuild, run the following command in the Package Manager Console
 
 	PM> Install-Package OneClickBuild
-	
+
+Steps after 1st time installation:
+
+1.  Copy 'OneClickBuild\tools' files to your solution root folder. 
+
+    copy .\packages\OneClickBuild.[version]\tools\*.*
+
+2. Rename `before.sln.targets` to `before.[solutionfilename].sln.targets`.
+
+    ren before.sln.targets before.[solutionname].sln.targets
+
+3. Add files as solution items to so you're aware of the files in Visual Studio as well.
+
+4. Complete `SolutionInfo.cs` with e.g. trademark, company & copyright info.
+
+5. Remove duplicate assembly attributes in your 'Properties\AssemblyInfo.cs', i.e.
+
+		[assembly: AssemblyDescription("")]
+		[assembly: AssemblyConfiguration("")]
+		[assembly: AssemblyCompany("")]
+		[assembly: AssemblyProduct("...")]
+		[assembly: AssemblyCopyright("Copyright ©  2015")]
+		[assembly: AssemblyTrademark("")]
+		[assembly: AssemblyCulture("")]
+		[assembly: ComVisible(false)]
+		[assembly: AssemblyVersion("1.0.0.0")]
+		[assembly: AssemblyFileVersion("1.0.0.0")]
+
+Finally, do a test build. In your solution folder type
+
+	build
+
+and you should get a clean **Release** build with version and git commit info attached
+to your output assemblies (see *File -> Properties -> Details*).
+
+Optionally you might find it helpful to wrap up on using [GitVersion](http://gitversion.readthedocs.org/en/latest/usage/#command-line)
+
+That's it. Enjoy.
+
+If you have any issues or feature requests with **OneClickBuild** please raise them 
+with the project owners on [GitHub](https://github.com/awesome-inc/OneClickBuild).
+
 ## Additional targets
 
 OneClickBuild brings the following additional build targets
@@ -60,26 +104,8 @@ To clean and build a specific project type
 
 ### Versioning
 
-The version number is generated during the build process according to  [Semantic Versioning](http://semver.org/) augmented by 
-
-- the *build number* from [CI](http://en.wikipedia.org/wiki/Continuous_integration) and
-- the *revision number* of the [SCM](http://en.wikipedia.org/wiki/Software_configuration_management).
-
-The pattern is
-
-	<major>.<minor>.<patch>.<build>
-
-or, respectively
-
-	<major>.<minor>.<patch>-<metadata>
-
-with
-
-- **major**: Manually incremented for major releases with breaking changes such as adding many new features to the solution or a new architectural design.
-- **minor**: Manually incremented for minor releases, such as regular feature implementations (backwards-compatible).
-- **patch**: Manually incremented for bug fixes or single and simple feature implementations (backwards-compatible).
-- **build**: Automatically set by the continuous build server ([Jenkins](https://jenkins-ci.org/) and [Appveyor](http://www.appveyor.com/) supported).
-- **metadata**: Automatically set by the build process (client and server) to reflect properties specific to the build (not the release!). Since recently, we delegated this to [Gitversion](https://github.com/GitTools/GitVersion).
+Version information is calculated during the build according to  [Semantic Versioning](http://semver.org/)
+using [GitVersion](https://github.com/GitTools/GitVersion). 
 
 When using git workflows like [GitFlow](http://nvie.com/posts/a-successful-git-branching-model/) or [GitHubFlow](http://scottchacon.com/2011/08/31/github-flow.html) then versioning is automated and you will almost never need to set a version anywhere in your project files.
 
@@ -239,7 +265,18 @@ To control the NuGet server the package is pushed to, override the property
 	<PropertyGroup>
 		<NugetSourceToDeploy>https://www.nuget.org</NugetSourceToDeploy>
 	</PropertyGroup>
- 
+
+#### <a name="ci-deploy"></a>Deploying locally vs. CI server
+
+In general, local deployment from a developer's working directory is discouraged to avoid human errors during release. Instead, it is usually better to always let a CI server deploy a release, e.g. [Jenkins](https://jenkins-ci.org/), [AppVeyor](http://www.appveyor.com/), [TeamCity](https://www.jetbrains.com/teamcity/), etc.
+
+OneClickBuild detects the presence of a CI build by checking for environment variables like `BUILD_NUMBER` and falls back to `$(Build) = 0` if no CI server is detected. In this case the default is to let the `Deploy` target fail.
+
+Although not recommended you can override this by setting
+
+    <DeployFailOnBuildNotSet>false</DeployFailOnBuildNotSet>
+
+in your `solution.targets`. 
 
 #### Example Package.nuspec
 Here is a simplified version of the `Package.nuspec` that is used by `OneClickBuild` itself:
@@ -334,6 +371,11 @@ The full error message should read something like this
 You may have set `ProjectDependencies` in your solution file which you should remove, cf.:
 [Building .net 4.0 web sites: .metaproj -files (Social MSDN)](http://social.msdn.microsoft.com/Forums/vstudio/en-US/562ae95f-e042-45c2-9821-62cac49d0152/building-net-40-web-sites-metaproj-files?forum=msbuild)
 
-### 'Test' target fails on Windows 10 with exit code -2146232576.
+### **Test** target fails on Windows 10 with exit code -2146232576.
 
 NUnit runners need .NET 3.5 so you need to turn on this Windows Feature. 
+
+### **Deploy** target fails with message `error : Build number not set. See the OneClickBuild README.`
+
+You did not specify a build number which usually indicates that you are not inside a CI build.
+See section [Deploying locally vs. CI server](#ci-deploy). 

@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Target Name="Version" BeforeTargets="BeforeBuild" DependsOnTargets="VersionWithGit" />
   <Target Name="Test" DependsOnTargets="Build;TestWithNunit"/>
   <Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithNUnit"/>
   <Target Name="CoverageReport" DependsOnTargets="Coverage;OpenCoverReport"/>
@@ -11,51 +10,46 @@
   <PropertyGroup>
     <!-- Use AppVeyor Build-Number, cf.: http://www.appveyor.com/docs/environment-variables -->
     <Build Condition="'$(CI)' == 'True'">$(APPVEYOR_BUILD_NUMBER)</Build>
-    <!-- Use Jenkins Build-Number -->
+    <!-- Use Build-Number from Jenkins or TeamCity -->
     <Build Condition="'$(BUILD_NUMBER)' != ''">$(BUILD_NUMBER)</Build>
     <!-- Fallback to "0" if still not set -->
     <Build Condition="'$(Build)' == ''">0</Build>
-    
-  </PropertyGroup>
+    <DeployFailOnBuildNotSet Condition="'$(DeployFailOnBuildNotSet)' == ''">true</DeployFailOnBuildNotSet>
 
-  <!--Git Versioning -->
-  <Target Name="VersionWithGit">
-    <GitVersionTask.GetVersion SolutionDirectory="$(SolutionDir)" />
-  </Target>
-
-  <!-- NuGet Packaging -->
-  <PropertyGroup>
     <NuspecFile Condition="'$(NuspecFile)'==''">$(ProjectDir)Package.nuspec</NuspecFile>
     <NugetSourceToDeploy Condition="'$(NugetSourceToDeploy)'==''">https://www.nuget.org</NugetSourceToDeploy>
   </PropertyGroup>
 
-  <Target Name="PackageWithNuGet" DependsOnTargets="Build;Version">
+
+  <!-- NuGet Packaging -->
+  <Target Name="PackageWithNuGet" DependsOnTargets="Build">
     <PropertyGroup>
-      <PackageVersion>$(GitVersion_MajorMinorPatch).$(Build)</PackageVersion>
       <Revision>$(GitVersion_Sha)</Revision>
     </PropertyGroup>
 
-    <Warning Condition="!Exists($(NuspecFile))" Text="Skipping target because .nuspec-file is missing (expected '$(NuspecFile)')" />
+    <Message Importance="Normal" Condition="!Exists($(NuspecFile))" Text="Skipping target because .nuspec-file is missing (expected '$(NuspecFile)')" />
     <Exec Condition="Exists($(NuspecFile))"
-          Command="nuget pack $(NuspecFile) -Properties Version=$(PackageVersion);Revision=$(Revision);Configuration=$(Configuration)"/>
+          Command="nuget pack $(NuspecFile) -Properties Version=$(GitVersion_NuGetVersion);Revision=$(Revision);Configuration=$(Configuration)"/>
   </Target>
 
   <Target Name="DeployWithNuGet" DependsOnTargets="PackageWithNuGet">
-    <Error Condition="'$(Build)' == '0'" Text="Build number not set."/>
+    <Error Condition="'$(Build)' == '0' And '$(DeployFailOnBuildNotSet)' != 'false'" Text="Build number not set. See the OneClickBuild README."/>
+
     <PropertyGroup>
-      <PackageId Condition="'$(PackageId)'==''">$(GitVersion_MajorMinorPatch).$(Build)</PackageId>
+      <NugetSourceToDeploy Condition="'$(NugetSourceToDeploy)'==''">https://www.nuget.org</NugetSourceToDeploy>
+      <PackageId Condition="'$(PackageId)'==''">$(GitVersion_NuGetVersion)</PackageId>
       <PackageName Condition="'$(PackageName)'=='' And Exists('$(ProjectName).$(PackageId).nupkg')">$(ProjectName)</PackageName>
       <PackageName Condition="'$(PackageName)'=='' And Exists('$(AssemblyName).$(PackageId).nupkg')">$(AssemblyName)</PackageName>
       <PackageName Condition="'$(PackageName)'=='' And Exists('$(RootNamespace).$(PackageId).nupkg')">$(RootNamespace)</PackageName>
       <PackageFile>$(PackageName).$(PackageId).nupkg</PackageFile>
     </PropertyGroup>
-    <Warning Condition="!Exists($(PackageFile))" Text="Skipping target because package file has not been built: $(PackageFile)." />
+    
+    <Message Condition="!Exists($(PackageFile))" Text="Skipping target because package file has not been built for project $(ProjectName)" Importance="Normal"  />
     <!-- To set API key use "NuGet.exe setApiKey <key> -Source <source>" -->
+    <Message Condition="'$(PackageFile)'!='' And Exists($(PackageFile))" Text="Pushing package $(PackageFile) to $(NugetSourceToDeploy)" Importance="High"  />
     <Exec Condition="'$(PackageFile)'!='' And Exists($(PackageFile))"
-          Command="nuget push $(PackageFile) -Source $(NugetSourceToDeploy)" />
+          Command="nuget push $(PackageFile) -Source $(NugetSourceToDeploy) > NUL" />
   </Target>
-
-
 
   <!-- NUnit -->
   <PropertyGroup>
@@ -117,8 +111,7 @@
 
     <Warning Condition="'@(TestAssemblies)' == ''" Text="Skipping target since no test assemblies to cover" />
     <Exec Condition="'@(TestAssemblies)' != ''" WorkingDirectory="$(OutDir)" IgnoreStandardErrorWarningFormat="true"
-          Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(NunitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(NunitArgs) /xml:\&quot;$(TestResults)\&quot; @(TestAssemblies, ' ')&quot;"
-          />
+          Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(NunitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(NunitArgs) /xml:\&quot;$(TestResults)\&quot; @(TestAssemblies, ' ')&quot;" />
   </Target>
 
   <!--Coverage Report -->
