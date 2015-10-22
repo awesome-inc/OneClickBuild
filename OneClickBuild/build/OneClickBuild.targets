@@ -16,7 +16,7 @@
     <Build Condition="'$(Build)' == ''">0</Build>
 
     <NuspecFile Condition="'$(NuspecFile)'==''">$(ProjectDir)Package.nuspec</NuspecFile>
-
+    <NugetSourceToDeploy Condition="'$(NugetSourceToDeploy)'==''">https://www.nuget.org</NugetSourceToDeploy>
   </PropertyGroup>
 
 
