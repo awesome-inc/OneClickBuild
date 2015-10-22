@@ -13,6 +13,8 @@
 
   <PropertyGroup>
     <CoverageFailOnTargetFail>false</CoverageFailOnTargetFail>
+    <DeployFailOnBuildNotSet>false</DeployFailOnBuildNotSet>
+    <!-- <Build>42</Build> -->
   </PropertyGroup>
 
   <PropertyGroup>

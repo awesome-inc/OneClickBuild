@@ -91,7 +91,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="$(ProjectName).targets" />
   <Import Project="..\packages\OneClickBuild.1.5.3.40\build\OneClickBuild.targets" Condition="Exists('..\packages\OneClickBuild.1.5.3.40\build\OneClickBuild.targets')" />
   <Import Project="..\packages\GitVersionTask.3.3.0\Build\portable-net+sl+win+wpa+wp\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.3.3.0\Build\portable-net+sl+win+wpa+wp\GitVersionTask.targets')" />
+  <Import Project="$(ProjectName).targets" />
 </Project>
