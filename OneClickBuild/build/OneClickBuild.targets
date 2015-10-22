@@ -10,10 +10,11 @@
   <PropertyGroup>
     <!-- Use AppVeyor Build-Number, cf.: http://www.appveyor.com/docs/environment-variables -->
     <Build Condition="'$(CI)' == 'True'">$(APPVEYOR_BUILD_NUMBER)</Build>
-    <!-- Use Jenkins Build-Number -->
+    <!-- Use Build-Number from Jenkins or TeamCity -->
     <Build Condition="'$(BUILD_NUMBER)' != ''">$(BUILD_NUMBER)</Build>
     <!-- Fallback to "0" if still not set -->
     <Build Condition="'$(Build)' == ''">0</Build>
+    <DeployFailOnBuildNotSet Condition="'$(DeployFailOnBuildNotSet)' == ''">true</DeployFailOnBuildNotSet>
 
     <NuspecFile Condition="'$(NuspecFile)'==''">$(ProjectDir)Package.nuspec</NuspecFile>
     <NugetSourceToDeploy Condition="'$(NugetSourceToDeploy)'==''">https://www.nuget.org</NugetSourceToDeploy>
@@ -32,7 +33,7 @@
   </Target>
 
   <Target Name="DeployWithNuGet" DependsOnTargets="PackageWithNuGet">
-    <Error Condition="'$(Build)' == '0'" Text="Build number not set."/>
+    <Error Condition="'$(Build)' == '0' And '$(DeployFailOnBuildNotSet)' != 'false'" Text="Build number not set. See the OneClickBuild README."/>
 
     <PropertyGroup>
       <NugetSourceToDeploy Condition="'$(NugetSourceToDeploy)'==''">https://www.nuget.org</NugetSourceToDeploy>

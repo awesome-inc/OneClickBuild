@@ -265,7 +265,18 @@ To control the NuGet server the package is pushed to, override the property
 	<PropertyGroup>
 		<NugetSourceToDeploy>https://www.nuget.org</NugetSourceToDeploy>
 	</PropertyGroup>
- 
+
+#### <a name="ci-deploy"></a>Deploying locally vs. CI server
+
+In general, local deployment from a developer's working directory is discouraged to avoid human errors during release. Instead, it is usually better to always let a CI server deploy a release, e.g. [Jenkins](https://jenkins-ci.org/), [AppVeyor](http://www.appveyor.com/), [TeamCity](https://www.jetbrains.com/teamcity/), etc.
+
+OneClickBuild detects the presence of a CI build by checking for environment variables like `BUILD_NUMBER` and falls back to `$(Build) = 0` if no CI server is detected. In this case the default is to let the `Deploy` target fail.
+
+Although not recommended you can override this by setting
+
+    <DeployFailOnBuildNotSet>false</DeployFailOnBuildNotSet>
+
+in your `solution.targets`. 
 
 #### Example Package.nuspec
 Here is a simplified version of the `Package.nuspec` that is used by `OneClickBuild` itself:
@@ -360,7 +371,11 @@ The full error message should read something like this
 You may have set `ProjectDependencies` in your solution file which you should remove, cf.:
 [Building .net 4.0 web sites: .metaproj -files (Social MSDN)](http://social.msdn.microsoft.com/Forums/vstudio/en-US/562ae95f-e042-45c2-9821-62cac49d0152/building-net-40-web-sites-metaproj-files?forum=msbuild)
 
-### 'Test' target fails on Windows 10 with exit code -2146232576.
+### **Test** target fails on Windows 10 with exit code -2146232576.
 
 NUnit runners need .NET 3.5 so you need to turn on this Windows Feature. 
 
+### **Deploy** target fails with message `error : Build number not set. See the OneClickBuild README.`
+
+You did not specify a build number which usually indicates that you are not inside a CI build.
+See section [Deploying locally vs. CI server](#ci-deploy). 
