@@ -28,7 +28,7 @@
 
     <Message Importance="Normal" Condition="!Exists($(NuspecFile))" Text="Skipping target because .nuspec-file is missing (expected '$(NuspecFile)')" />
     <Exec Condition="Exists($(NuspecFile))"
-          Command="nuget pack $(NuspecFile) -Properties Version=$(GitVersion_MajorMinorPatch).$(Build);Revision=$(Revision);Configuration=$(Configuration)"/>
+          Command="nuget pack $(NuspecFile) -Properties Version=$(GitVersion_NuGetVersion);Revision=$(Revision);Configuration=$(Configuration)"/>
   </Target>
 
   <Target Name="DeployWithNuGet" DependsOnTargets="PackageWithNuGet">
@@ -36,7 +36,7 @@
 
     <PropertyGroup>
       <NugetSourceToDeploy Condition="'$(NugetSourceToDeploy)'==''">https://www.nuget.org</NugetSourceToDeploy>
-      <PackageId Condition="'$(PackageId)'==''">$(GitVersion_MajorMinorPatch).$(Build)</PackageId>
+      <PackageId Condition="'$(PackageId)'==''">$(GitVersion_NuGetVersion)</PackageId>
       <PackageName Condition="'$(PackageName)'=='' And Exists('$(ProjectName).$(PackageId).nupkg')">$(ProjectName)</PackageName>
       <PackageName Condition="'$(PackageName)'=='' And Exists('$(AssemblyName).$(PackageId).nupkg')">$(AssemblyName)</PackageName>
       <PackageName Condition="'$(PackageName)'=='' And Exists('$(RootNamespace).$(PackageId).nupkg')">$(RootNamespace)</PackageName>
@@ -110,8 +110,7 @@
 
     <Warning Condition="'@(TestAssemblies)' == ''" Text="Skipping target since no test assemblies to cover" />
     <Exec Condition="'@(TestAssemblies)' != ''" WorkingDirectory="$(OutDir)" IgnoreStandardErrorWarningFormat="true"
-          Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(NunitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(NunitArgs) /xml:\&quot;$(TestResults)\&quot; @(TestAssemblies, ' ')&quot;"
-          />
+          Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(NunitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(NunitArgs) /xml:\&quot;$(TestResults)\&quot; @(TestAssemblies, ' ')&quot;" />
   </Target>
 
   <!--Coverage Report -->
