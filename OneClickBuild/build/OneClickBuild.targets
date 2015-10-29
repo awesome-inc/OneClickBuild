@@ -70,12 +70,12 @@
     <!-- NOTE: this item group is placed inside the target scope
     so it will be evaluated lazy, i.e. after NuGet Package Restore 
     installed Nunit.Runners for us. -->
-    <ItemGroup>
+    <ItemGroup Condition="'@(NunitConsole)' == ''">
       <NunitConsole Include="$(NUnitPath)"/>
     </ItemGroup>
     <Warning Condition="'@(TestAssemblies)' == ''" Text="Skipping target since no test assemblies" />
     <Exec Condition="'@(TestAssemblies)' != ''" WorkingDirectory="$(OutDir)"
-          Command="&quot;@(NunitConsole->'%(FullPath)')&quot; $(NunitArgs) /xml:&quot;$(TestResults)&quot; @(TestAssemblies, ' ')" />
+          Command="&quot;@(NUnitConsole->'%(FullPath)')&quot; $(NunitArgs) /xml:&quot;$(TestResults)&quot; @(TestAssemblies, ' ')" />
   </Target>
 
   <!-- OpenCover -->
@@ -95,8 +95,8 @@
   </PropertyGroup>
 
   <Target Name="OpenCoverWithNUnit" DependsOnTargets="PrepareTests">
-    <ItemGroup Condition="'@(NunitConsole)' == ''">
-      <NunitConsole Include="$(NUnitPath)"/>
+    <ItemGroup Condition="'@(NUnitConsole)' == ''">
+      <NUnitConsole Include="$(NUnitPath)"/>
     </ItemGroup>
     <ItemGroup>
       <OpenCoverConsole Include="$(SolutionDir)packages\OpenCover.*\tools\OpenCover.Console.exe"/>
@@ -111,7 +111,7 @@
 
     <Warning Condition="'@(TestAssemblies)' == ''" Text="Skipping target since no test assemblies to cover" />
     <Exec Condition="'@(TestAssemblies)' != ''" WorkingDirectory="$(OutDir)" IgnoreStandardErrorWarningFormat="true"
-          Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(NunitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(NunitArgs) /xml:\&quot;$(TestResults)\&quot; @(TestAssemblies, ' ')&quot;" />
+          Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(NUnitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(NunitArgs) /xml:\&quot;$(TestResults)\&quot; @(TestAssemblies, ' ')&quot;" />
   </Target>
 
   <!--Coverage Report -->
