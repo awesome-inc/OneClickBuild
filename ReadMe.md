@@ -260,10 +260,10 @@ To push the built package to a NuGet gallery use the `Deploy`-target like
 	build MyLibrary\MyLibrary.csproj /t:Package
 
 To control the NuGet server the package is pushed to, override the property
-`NugetSourceToDeploy` in `solution.targets`. It defaults to
+`NuGetSourceToDeploy` in `solution.targets`. It defaults to
  
 	<PropertyGroup>
-		<NugetSourceToDeploy>https://www.nuget.org</NugetSourceToDeploy>
+		<NuGetSourceToDeploy>https://www.nuget.org</NuGetSourceToDeploy>
 	</PropertyGroup>
 
 #### <a name="ci-deploy"></a>Deploying locally vs. CI server

@@ -17,7 +17,7 @@
     <DeployFailOnBuildNotSet Condition="'$(DeployFailOnBuildNotSet)' == ''">true</DeployFailOnBuildNotSet>
 
     <NuspecFile Condition="'$(NuspecFile)'==''">$(ProjectDir)Package.nuspec</NuspecFile>
-    <NugetSourceToDeploy Condition="'$(NugetSourceToDeploy)'==''">https://www.nuget.org</NugetSourceToDeploy>
+    <NuGetSourceToDeploy Condition="'$(NuGetSourceToDeploy)'==''">https://www.nuget.org</NuGetSourceToDeploy>
   </PropertyGroup>
 
 
@@ -36,19 +36,18 @@
     <Error Condition="'$(Build)' == '0' And '$(DeployFailOnBuildNotSet)' != 'false'" Text="Build number not set. See the OneClickBuild README."/>
 
     <PropertyGroup>
-      <NugetSourceToDeploy Condition="'$(NugetSourceToDeploy)'==''">https://www.nuget.org</NugetSourceToDeploy>
-      <PackageId Condition="'$(PackageId)'==''">$(GitVersion_NuGetVersion)</PackageId>
-      <PackageName Condition="'$(PackageName)'=='' And Exists('$(ProjectName).$(PackageId).nupkg')">$(ProjectName)</PackageName>
-      <PackageName Condition="'$(PackageName)'=='' And Exists('$(AssemblyName).$(PackageId).nupkg')">$(AssemblyName)</PackageName>
-      <PackageName Condition="'$(PackageName)'=='' And Exists('$(RootNamespace).$(PackageId).nupkg')">$(RootNamespace)</PackageName>
-      <PackageFile>$(PackageName).$(PackageId).nupkg</PackageFile>
+      <PackageVersion Condition="'$(PackageVersion)'==''">$(GitVersion_NuGetVersion)</PackageVersion>
+      <PackageId Condition="'$(PackageName)'=='' And Exists('$(ProjectName).$(PackageVersion).nupkg')">$(ProjectName)</PackageId>
+      <PackageId Condition="'$(PackageName)'=='' And Exists('$(AssemblyName).$(PackageVersion).nupkg')">$(AssemblyName)</PackageId>
+      <PackageId Condition="'$(PackageName)'=='' And Exists('$(RootNamespace).$(PackageVersion).nupkg')">$(RootNamespace)</PackageId>
+      <PackageFile>$(PackageId).$(PackageVersion).nupkg</PackageFile>
     </PropertyGroup>
     
-    <Message Condition="!Exists($(PackageFile))" Text="Skipping target because package file has not been built for project $(ProjectName)" Importance="Normal"  />
+    <Message Condition="!Exists($(PackageFile))" Text="Skipping target because package file '$(PackageFile)' has not been built for project '$(ProjectName)'" Importance="Normal"  />
     <!-- To set API key use "NuGet.exe setApiKey <key> -Source <source>" -->
-    <Message Condition="'$(PackageFile)'!='' And Exists($(PackageFile))" Text="Pushing package $(PackageFile) to $(NugetSourceToDeploy)" Importance="High"  />
+    <Message Condition="'$(PackageFile)'!='' And Exists($(PackageFile))" Text="Pushing package $(PackageFile) to $(NuGetSourceToDeploy)..." Importance="High"  />
     <Exec Condition="'$(PackageFile)'!='' And Exists($(PackageFile))"
-          Command="nuget push $(PackageFile) -Source $(NugetSourceToDeploy) > NUL" />
+          Command="nuget push $(PackageFile) -Source $(NuGetSourceToDeploy) > NUL" />
   </Target>
 
   <!-- NUnit -->
