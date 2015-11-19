@@ -1,18 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Target Name="SetClickOnceVersion" BeforeTargets="GenerateDeploymentManifest" DependsOnTargets="UpdateAssemblyInfo">
+  <Target Name="Deploy" DependsOnTargets="Publish" />
+
+  <Target Name="MyApp_SetSetClickOnceVersion" 
+    Condition="'$(ApplicationVersion)'==''"
+    AfterTargets="UpdateAssemblyInfo" 
+    BeforeTargets="_DeploymentComputeClickOnceManifestInfo">
     <CreateProperty Value="$(GitVersion_MajorMinorPatch).$(Build)">
       <Output TaskParameter="Value" PropertyName="ApplicationVersion"/>
     </CreateProperty>
+    <Message Text="ApplicationVersion: $(ApplicationVersion)" Importance="High"/>
   </Target>
   
-  <Target Name="Deploy" DependsOnTargets="SetClickOnceVersion;Publish">
-    <Message Text="Deployed '$(ProjectName) - $(ApplicationVersion)' to '$(PublishDir)'" Importance="High"/>
-  </Target>
-
   <PropertyGroup>
     <CoverageFailOnTargetFail>false</CoverageFailOnTargetFail>
+    <DeployFailOnBuildNotSet>false</DeployFailOnBuildNotSet>
+    <!-- <Build>42</Build> -->
   </PropertyGroup>
 
   <PropertyGroup>
@@ -70,11 +74,6 @@
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
       <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
       <Visible>False</Visible>
