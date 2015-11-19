@@ -65,16 +65,22 @@
     <NunitArgs>/nologo /nodots /noshadow /framework=net-4.0 /domain=single /trace=$(TestVerbosity)</NunitArgs>
   </PropertyGroup>
 
-  <Target Name="TestWithNunit" DependsOnTargets="PrepareTests">
-    <!-- NOTE: this item group is placed inside the target scope
-    so it will be evaluated lazy, i.e. after NuGet Package Restore 
-    installed Nunit.Runners for us. -->
-    <ItemGroup Condition="'@(NunitConsole)' == ''">
-      <NunitConsole Include="$(NUnitPath)"/>
+  <Target Name="TestWithNunit" 
+          DependsOnTargets="PrepareTests;SelectNUnitConsole" >
+    <Message Condition="'@(TestAssemblies)' == ''" 
+       Text="Skipping target since no test assemblies" />
+    <Exec Condition="'@(TestAssemblies)' != ''"
+        WorkingDirectory="$(OutDir)"
+        Command="&quot;@(NUnitConsole->'%(FullPath)')&quot; $(NunitArgs) /xml:&quot;$(TestResults)&quot; @(TestAssemblies, ' ')" />
+  </Target>
+  
+  <Target Name="SelectNUnitConsole" Condition="'@(NUnitConsole)'==''">
+    <ItemGroup>
+      <NUnitConsoleFiles Include="$(NUnitPath)"/>
     </ItemGroup>
-    <Warning Condition="'@(TestAssemblies)' == ''" Text="Skipping target since no test assemblies" />
-    <Exec Condition="'@(TestAssemblies)' != ''" WorkingDirectory="$(OutDir)"
-          Command="&quot;@(NUnitConsole->'%(FullPath)')&quot; $(NunitArgs) /xml:&quot;$(TestResults)&quot; @(TestAssemblies, ' ')" />
+    <GetLatest Files="@(NUnitConsoleFiles)">
+      <Output TaskParameter="Result" ItemName="NUnitConsole"/>
+    </GetLatest>    
   </Target>
 
   <!-- OpenCover -->
@@ -93,13 +99,8 @@
     <CoverageReportVerbosity Condition="'$(CoverageReportVerbosity)' == ''">Error</CoverageReportVerbosity>
   </PropertyGroup>
 
-  <Target Name="OpenCoverWithNUnit" DependsOnTargets="PrepareTests">
-    <ItemGroup Condition="'@(NUnitConsole)' == ''">
-      <NUnitConsole Include="$(NUnitPath)"/>
-    </ItemGroup>
-    <ItemGroup>
-      <OpenCoverConsole Include="$(SolutionDir)packages\OpenCover.*\tools\OpenCover.Console.exe"/>
-    </ItemGroup>
+  <Target Name="OpenCoverWithNUnit"
+          DependsOnTargets="PrepareTests;SelectNUnitConsole;SelectOpenCoverConsole">
     <PropertyGroup>
       <!-- Skip register profiler per user if run by System account -->
       <RegisterProfiler Condition="!$(USERPROFILE.EndsWith('systemprofile'))">-register:user</RegisterProfiler>
@@ -108,24 +109,45 @@
       <OpenCoverArgs>$(RegisterProfiler) -filter:&quot;$(OpenCoverFilter)&quot; -output:&quot;$(OpenCoverOutput)&quot; -nodefaultfilters -mergebyhash -skipautoprops $(ReturnTargetCode) -excludebyattribute:&quot;$(OpenCoverExcludeAttributes)&quot; -excludebyfile:&quot;$(OpenCoverExcludeFiles)&quot; -log:$(CoverageVerbosity)</OpenCoverArgs>
     </PropertyGroup>
 
-    <Warning Condition="'@(TestAssemblies)' == ''" Text="Skipping target since no test assemblies to cover" />
-    <Exec Condition="'@(TestAssemblies)' != ''" WorkingDirectory="$(OutDir)" IgnoreStandardErrorWarningFormat="true"
+    <Message Condition="'@(TestAssemblies)' == ''" 
+       Text="Skipping target since no test assemblies to cover" />
+    <Exec Condition="'@(TestAssemblies)' != ''" 
+          WorkingDirectory="$(OutDir)" 
+          IgnoreStandardErrorWarningFormat="true"
           Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(NUnitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(NunitArgs) /xml:\&quot;$(TestResults)\&quot; @(TestAssemblies, ' ')&quot;" />
   </Target>
+  
+  <Target Name="SelectOpenCoverConsole" Condition="'@(OpenCoverConsole)'==''">
+    <ItemGroup>
+      <OpenCoverConsoleFiles Include="$(SolutionDir)packages\OpenCover.*\tools\OpenCover.Console.exe"/>
+    </ItemGroup>
+    <GetLatest Files="@(OpenCoverConsoleFiles)">
+      <Output TaskParameter="Result" ItemName="OpenCoverConsole"/>
+    </GetLatest>    
+  </Target>
+  
 
   <!--Coverage Report -->
-  <Target Name="OpenCoverReport" DependsOnTargets="OpenCoverWithNUnit;PrepareCoverage">
+  <Target Name="OpenCoverReport" DependsOnTargets="OpenCoverWithNUnit;PrepareCoverage;SelectReportGenerator">
     <PropertyGroup>
       <ReportGeneratorArgs>-reports:$(OpenCoverOutput) -targetdir:$(CoverageReportDir) -verbosity:$(CoverageReportVerbosity)</ReportGeneratorArgs>
     </PropertyGroup>
-    <ItemGroup>
-      <ReportGenerator Include="$(SolutionDir)packages\ReportGenerator.*\tools\ReportGenerator.exe"/>
-    </ItemGroup>
-
-    <Warning Condition="'@(TestAssemblies)' == ''" Text="Skipping target since no test assemblies to report coverage on" />
-    <Exec Command="@(ReportGenerator->'%(FullPath)') $(ReportGeneratorArgs)"
-          WorkingDirectory="$(OutDir)" Condition="'@(TestAssemblies)' != ''"/>
+    <Message Condition="'@(TestAssemblies)' == ''" 
+         Text="Skipping target since no test assemblies to report coverage on" />
+    <Exec Condition="'@(TestAssemblies)' != ''"  
+         Command="@(ReportGenerator->'%(FullPath)') $(ReportGeneratorArgs)"
+         WorkingDirectory="$(OutDir)" />
   </Target>
+  
+  <Target Name="SelectReportGenerator" Condition="'@(ReportGenerator)'==''">
+    <ItemGroup>
+      <ReportGeneratorFiles Include="$(SolutionDir)packages\ReportGenerator.*\tools\ReportGenerator.exe"/>
+    </ItemGroup>
+    <GetLatest Files="@(ReportGeneratorFiles)">
+      <Output TaskParameter="Result" ItemName="ReportGenerator"/>
+    </GetLatest>    
+  </Target>
+  
 
   <!-- Helper targets -->
   <!-- helper target to get the names of the assemblies to test -->
@@ -153,5 +175,23 @@
     <Warning Condition="!Exists('$(SolutionDir)\solution.targets')" Text="$(WarningText)" />
   </Target>
 
+  <!-- Helper task to select newest tool file in case there are mixed packages installed -->
+  <PropertyGroup>
+    <CodeTaskFactoryDll Condition="'$(MSBuildToolsVersion)' != '14'">$(MSBuildToolsPath)\Microsoft.Build.Tasks.v$(MSBuildToolsVersion).dll</CodeTaskFactoryDll>
+    <CodeTaskFactoryDll Condition="'$(MSBuildToolsVersion)' == '14'">$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll</CodeTaskFactoryDll>
+  </PropertyGroup>
+  <UsingTask TaskName="GetLatest" TaskFactory="CodeTaskFactory" AssemblyFile="$(CodeTaskFactoryDll)">
+    <ParameterGroup>
+      <Files ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <Result ParameterType="Microsoft.Build.Framework.ITaskItem" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+        Result = Files.LastOrDefault();
+        ]]></Code>
+    </Task>
+  </UsingTask>
+  
   <Import Project="$(SolutionDir)\solution.targets" Condition="Exists('$(SolutionDir)\solution.targets')" />
 </Project>
