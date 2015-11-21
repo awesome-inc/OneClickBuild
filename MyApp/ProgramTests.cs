@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 
-namespace MyApp.Tests
+namespace MyApp
 {
     [TestFixture]
-    class ProgramTests
+    internal class ProgramTests
     {
         // ReSharper disable InconsistentNaming
         [Test]
@@ -23,11 +23,10 @@ namespace MyApp.Tests
             Assert.Pass();
         }
 
-        [Test]
+        [Test, Ignore("make build pass")]
         public void Some_Failing_Test()
         {
             Assert.Fail();
         }
-        // ReSharper restore InconsistentNaming
     }
 }

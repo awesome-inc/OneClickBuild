@@ -56,25 +56,32 @@
     <TestsProjectPattern Condition="'$(TestsProjectPattern)' == '' And '$(OutputType)' == 'Library'">$(OutDir)$(AssemblyName).dll</TestsProjectPattern>
     <TestResultsDir Condition="'$(TestResultsDir)' == ''">$(SolutionDir)testresults\</TestResultsDir>
     <TestResults Condition="'$(TestResults)' == ''">$(TestResultsDir)$(ProjectName).Tests.xml</TestResults>
-    <NUnitPath Condition="'$(PlatformTarget)' == 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console-x86.exe</NUnitPath>
-    <NUnitPath Condition="'$(PlatformTarget)' != 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console.exe</NUnitPath>
-
-    <!--verbosity -->
     <!-- NUnit verbosity: Off|Error|Warning|Info|Verbose-->
-    <TestVerbosity Condition="'$(TestVerbosity)' == ''">Warning</TestVerbosity>
-    <NunitArgs>/nologo /nodots /noshadow /framework=net-4.0 /domain=single /trace=$(TestVerbosity)</NunitArgs>
+    <TestVerbosity Condition="'$(TestVerbosity)' == ''">Off</TestVerbosity>
   </PropertyGroup>
 
-  <Target Name="TestWithNunit" 
-          DependsOnTargets="PrepareTests;SelectNUnitConsole" >
-    <Message Condition="'@(TestAssemblies)' == ''" 
-       Text="Skipping target since no test assemblies" />
-    <Exec Condition="'@(TestAssemblies)' != ''"
-        WorkingDirectory="$(OutDir)"
-        Command="&quot;@(NUnitConsole->'%(FullPath)')&quot; $(NunitArgs) /xml:&quot;$(TestResults)&quot; @(TestAssemblies, ' ')" />
+  <Target Name="TestWithNunit" DependsOnTargets="PrepareTests;SelectNUnitConsole;_TestWithNunit" />
+
+  <Target Name="_TestWithNunit" Condition="'@(TestAssemblies)' != ''">
+    <PropertyGroup>
+      <CommonNUnitArgs>/framework=$(TargetFrameworkVersion) /trace=$(TestVerbosity)</CommonNUnitArgs>
+      <NUnitResultFormat Condition="'$(NUnitResultFormat)' == ''">nunit2</NUnitResultFormat>
+      <Nunit3Args Condition="'$(UseNUnit3)' == 'true'">--result:TestResult.xml;format=$(NUnitResultFormat)</Nunit3Args>
+      <Nunit2Args Condition="'$(UseNUnit3)' != 'true'">/nologo /nodots /noshadow /domain=single</Nunit2Args>
+      <NunitArgs>$(CommonNUnitArgs) $(NUnit2Args) $(Nunit3Args)</NunitArgs>
+    </PropertyGroup>
+    
+    <Exec WorkingDirectory="$(OutDir)"
+        Command="&quot;@(NUnitConsole->'%(FullPath)')&quot; $(NunitArgs) @(TestAssemblies, ' ')" />
+    <Move SourceFiles="$(OutDir)\TestResult.xml" DestinationFiles="$(TestResults)"/>
   </Target>
   
   <Target Name="SelectNUnitConsole" Condition="'@(NUnitConsole)'==''">
+    <PropertyGroup>
+      <NUnitPath Condition="'$(UseNUnit3)' != 'true' And '$(PlatformTarget)' == 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console-x86.exe</NUnitPath>
+      <NUnitPath Condition="'$(UseNUnit3)' != 'true' And '$(PlatformTarget)' != 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console.exe</NUnitPath>
+      <NUnitPath Condition="'$(UseNUnit3)' == 'true'">$(SolutionDir)packages\NUnit.Console.*\tools\nunit3-console.exe</NUnitPath>
+    </PropertyGroup>
     <ItemGroup>
       <NUnitConsoleFiles Include="$(NUnitPath)"/>
     </ItemGroup>
@@ -100,21 +107,28 @@
   </PropertyGroup>
 
   <Target Name="OpenCoverWithNUnit"
-          DependsOnTargets="PrepareTests;SelectNUnitConsole;SelectOpenCoverConsole">
+          DependsOnTargets="PrepareTests;SelectNUnitConsole;SelectOpenCoverConsole;_OpenCoverWithNUnit">
+  </Target>
+
+  <Target Name="_OpenCoverWithNUnit" Condition="'@(TestAssemblies)' != ''">
     <PropertyGroup>
       <!-- Skip register profiler per user if run by System account -->
       <RegisterProfiler Condition="!$(USERPROFILE.EndsWith('systemprofile'))">-register:user</RegisterProfiler>
       <RegisterProfiler Condition="$(USERPROFILE.EndsWith('systemprofile'))">-register</RegisterProfiler>
       <ReturnTargetCode Condition="'$(CoverageFailOnTargetFail)' == 'true'">-returntargetcode</ReturnTargetCode>
       <OpenCoverArgs>$(RegisterProfiler) -filter:&quot;$(OpenCoverFilter)&quot; -output:&quot;$(OpenCoverOutput)&quot; -nodefaultfilters -mergebyhash -skipautoprops $(ReturnTargetCode) -excludebyattribute:&quot;$(OpenCoverExcludeAttributes)&quot; -excludebyfile:&quot;$(OpenCoverExcludeFiles)&quot; -log:$(CoverageVerbosity)</OpenCoverArgs>
+
+      <CommonNUnitArgs>/framework=$(TargetFrameworkVersion) /trace=$(TestVerbosity)</CommonNUnitArgs>
+      <NUnitResultFormat Condition="'$(NUnitResultFormat)' == ''">nunit2</NUnitResultFormat>
+      <Nunit3Args Condition="'$(UseNUnit3)' == 'true'">--result:TestResult.xml;format=$(NUnitResultFormat)</Nunit3Args>
+      <Nunit2Args Condition="'$(UseNUnit3)' != 'true'">/nologo /nodots /noshadow /domain=single</Nunit2Args>
+      <NunitArgs>$(CommonNUnitArgs) $(NUnit2Args) $(Nunit3Args)</NunitArgs>
     </PropertyGroup>
 
-    <Message Condition="'@(TestAssemblies)' == ''" 
-       Text="Skipping target since no test assemblies to cover" />
-    <Exec Condition="'@(TestAssemblies)' != ''" 
-          WorkingDirectory="$(OutDir)" 
+    <Exec WorkingDirectory="$(OutDir)"
           IgnoreStandardErrorWarningFormat="true"
-          Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(NUnitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(NunitArgs) /xml:\&quot;$(TestResults)\&quot; @(TestAssemblies, ' ')&quot;" />
+          Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(NUnitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(NunitArgs) @(TestAssemblies, ' ')&quot;" />
+    <Move SourceFiles="$(OutDir)\TestResult.xml" DestinationFiles="$(TestResults)"/>
   </Target>
   
   <Target Name="SelectOpenCoverConsole" Condition="'@(OpenCoverConsole)'==''">

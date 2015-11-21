@@ -1,15 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <ItemGroup>
-     <Compile Include="$(SolutionDir)SolutionInfo.cs">
-      <Link>Properties\SolutionInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  
-	<!-- ## An example to automatically import project-specific override :
-    <Import Project="$(ProjectDir)\$(ProjectName).targets" Condition="Exists('$(ProjectDir)\$(ProjectName).targets')"/>	
-	-->
+	<ItemGroup>
+		 <Compile Include="$(SolutionDir)SolutionInfo.cs">
+			<Link>Properties\SolutionInfo.cs</Link>
+		</Compile>
+	</ItemGroup>
 	
 	<!-- ## Uncomment to customize targets to customize test ##
 	<Target Name="Test" DependsOnTargets="TestWithNUnit"/>
@@ -47,6 +43,20 @@
 	</Target>
 	-->
 
+	<!-- ## Let coverage succeed even when test fail (for feature branches):
+	<PropertyGroup>
+		<CoverageFailOnTargetFail>false</CoverageFailOnTargetFail>
+	</PropertyGroup>
+	-->
+
+	<!-- ## Using NUnit 3:
+	<PropertyGroup>
+		<UseNUnit3>true</UseNUnit3>
+		<NUnitResultFormat>nunit3</NUnitResultFormat>
+	</PropertyGroup>
+	-->
+
+
 	<!-- ## Uncomment	to override the default nuget server to push packages to in the 'Deploy' target
 	<PropertyGroup>
 		<NugetSourceToDeploy>https://www.nuget.org</NugetSourceToDeploy>
@@ -62,4 +72,14 @@
 	<!-- ## An example to customize the 'Deploy' target to use ClickOnce publishing:
 	<Target Name="Deploy" DependsOnTargets="Publish" />
 	-->
+
+	<!-- ## Allowing local deployment (non build server):
+	<PropertyGroup>
+		<DeployFailOnBuildNotSet>false</DeployFailOnBuildNotSet>
+	</PropertyGroup>
+	-->
+
+	<!-- ## Automatically import project-specific overrides (place this last) -->
+	<Import Project="$(ProjectDir)\$(ProjectName).targets" Condition="Exists('$(ProjectDir)\$(ProjectName).targets')"/>
+
 </Project>
