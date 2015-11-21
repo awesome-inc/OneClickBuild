@@ -10,13 +10,15 @@
     <CreateProperty Value="$(GitVersion_MajorMinorPatch).$(Build)">
       <Output TaskParameter="Value" PropertyName="ApplicationVersion"/>
     </CreateProperty>
-    <Message Text="ApplicationVersion: $(ApplicationVersion)" Importance="High"/>
+    <Message Text="ApplicationVersion: $(ApplicationVersion)"/>
   </Target>
   
   <PropertyGroup>
+    <!-- <Build>42</Build> -->
     <CoverageFailOnTargetFail>false</CoverageFailOnTargetFail>
     <DeployFailOnBuildNotSet>false</DeployFailOnBuildNotSet>
-    <!-- <Build>42</Build> -->
+    <UseNUnit3>true</UseNUnit3>
+    <NUnitResultFormat>nunit3</NUnitResultFormat>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -178,6 +178,23 @@ for applications. This presumes that you may have tests included in your product
 
 		<TestsProjectPattern >$(OutDir)$(AssemblyName).exe;$(OutDir)MyCode*.dll;$(OutDir)3rdParty*.dll</TestsProjectPattern>
 
+#### Using NUnit3
+
+As of version 1.7.x OneClickBuild optionally supports NUnit3. To enable NUnit3 update the `NUnit.Runners` package to version 3.x. Then set the
+`UseNUnit3` property to `true`, i.e.
+
+    <UseNUnit3>true</UseNUnit3>
+
+Additionally, you can set the [NUnit XML output format](http://nunit.org/index.php?p=consoleCommandLine&r=3.0)
+
+    <NUnitResultFormat>nunit3</NUnitResultFormat>
+
+In order to preserve compatibility to other tools like Jenkins & Sonar, the default is to use the legacy NUnit 2 format (`nunit2`). 
+
+When using NUnit 3 throughout all projects in your solution (recommende), a good place to set these properties is the `solution.targets`. 
+
+If you desperately need mixing NUnit 2 & 3 in your projects, then set these properties only in the project specific targets for the projects using NUnit 3.
+
 ### Getting Code Coverage (OpenCover)
 
 The target `Coverage` executes [OpenCover](http://opencover.codeplex.com/) targeting [NUnit](http://www.nunit.org/).
@@ -220,6 +237,41 @@ This is the default behavior but since there may be cases where you want to get 
 	<PropertyGroup>
 		<CoverageFailOnTargetFail>false</CoverageFailOnTargetFail>
 	</PropertyGroup>
+
+### Project-specific targets
+
+Overriding the default solution targets can be achieved by adding a project specific targets file. The default `solution.targets` of OneClickBuild will pick this up by doing a conditional import
+
+    <!-- ## Automatically import project-specific overrides (place this last) -->
+	<Import Project="$(ProjectDir)\$(ProjectName).targets" Condition="Exists('$(ProjectDir)\$(ProjectName).targets')"/>
+
+#### Use case: Override `Deploy` for ClickOnce publishing
+
+Here is an example how to override the `Deploy` target to publish a ClickOnce application (based on issue [#6](https://github.com/awesome-inc/OneClickBuild/issues/6)):
+
+    <Target Name="Deploy" DependsOnTargets="Publish"/>
+    <Target Name="Package" BeforeTargets="_CopyFilesToPublishFolder" DependsOnTargets="Build"/>
+
+    <!--cf: https://github.com/awesome-inc/OneClickBuild/issues/6 -->
+    <Target Name="SetClickOnceProperties"
+    Condition="'$(ApplicationVersion)'==''"
+    AfterTargets="UpdateAssemblyInfo" 
+    BeforeTargets="_DeploymentComputeClickOnceManifestInfo">
+    <CreateProperty Value="$(GitVersion_MajorMinorPatch).$(Build)">
+      <Output TaskParameter="Value" PropertyName="ApplicationVersion"/>
+    </CreateProperty>
+    
+    <Message Text="ApplicationVersion (ClickOnce) set to '$(ApplicationVersion)'" />
+  </Target>
+
+**NOTE:** Deploying Microsoft Office plugins with [VSTO](https://en.wikipedia.org/wiki/Visual_Studio_Tools_for_Office) also uses ClickOnce.  For VSTO you need to override `PublishVersion` as well, i.e. add
+
+	<!-- for VSTO -->
+	<CreateProperty Value="$(ApplicationVersion)">
+	  <Output TaskParameter="Value" PropertyName="PublishVersion"/>
+	</CreateProperty>
+
+to the target.
 
 ### Continuous Integration (Jenkins)
 

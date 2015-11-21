@@ -4,9 +4,9 @@ using MyLib;
 
 namespace MyApp
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             PrintArgs(args);
 

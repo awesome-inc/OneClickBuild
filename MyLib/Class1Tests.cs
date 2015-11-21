@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 
-namespace MyLib.Tests
+namespace MyLib
 {
     [TestFixture]
-    class Class1Tests
+    internal class Class1Tests
     {
         [Test]
         public void SomePassingTest()
@@ -21,7 +21,7 @@ namespace MyLib.Tests
             Assert.Pass();
         }
 
-        [Test(Description="Ignore to fix test build")]
+        [Test(Description="Ignore to fix test build"), Ignore]
         public void SomeFailingTest()
         {
             Assert.Fail();
