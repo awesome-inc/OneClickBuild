@@ -10,7 +10,7 @@
     <CreateProperty Value="$(GitVersion_MajorMinorPatch).$(Build)">
       <Output TaskParameter="Value" PropertyName="ApplicationVersion"/>
     </CreateProperty>
-    <Message Text="ApplicationVersion: $(ApplicationVersion)" Importance="High"/>
+    <Message Text="ApplicationVersion: $(ApplicationVersion)"/>
   </Target>
   
   <PropertyGroup>

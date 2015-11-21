@@ -93,5 +93,4 @@
   -->
   <Import Project="..\packages\GitVersionTask.3.3.0\Build\portable-net+sl+win+wpa+wp\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.3.3.0\Build\portable-net+sl+win+wpa+wp\GitVersionTask.targets')" />
   <Import Project="..\OneClickBuild\build\OneClickBuild.targets" />
-  <Import Project="$(ProjectName).targets" />
 </Project>

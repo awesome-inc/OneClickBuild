@@ -7,7 +7,10 @@
     </Compile>
   </ItemGroup>
   
-
+	<!-- ## An example to automatically import project-specific override :
+    <Import Project="$(ProjectDir)\$(ProjectName).targets" Condition="Exists('$(ProjectDir)\$(ProjectName).targets')"/>	
+	-->
+	
 	<!-- ## Uncomment to customize targets to customize test ##
 	<Target Name="Test" DependsOnTargets="TestWithNUnit"/>
 	<Target Name="Coverage" DependsOnTargets="OpenCoverWithNUnit"/>

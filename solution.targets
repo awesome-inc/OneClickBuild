@@ -6,7 +6,10 @@
 			<Link>Properties\SolutionInfo.cs</Link>
 		</Compile>
 	</ItemGroup>
-	
+
+    <!-- Automatically import project-specific overrides -->
+    <Import Project="$(ProjectDir)\$(ProjectName).targets" Condition="Exists('$(ProjectDir)\$(ProjectName).targets')"/>	
+
 	<!-- ## Uncomment to customize targets to customize test ##
 	<Target Name="Test" DependsOnTargets="TestWithNUnit"/>
 	<Target Name="Coverage" DependsOnTargets="OpenCoverWithNUnit"/>
