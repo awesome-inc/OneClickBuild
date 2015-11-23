@@ -64,15 +64,15 @@
 
   <Target Name="_TestWithNunit" Condition="'@(TestAssemblies)' != ''">
     <PropertyGroup>
-      <CommonNUnitArgs>/framework=$(TargetFrameworkVersion) /trace=$(TestVerbosity)</CommonNUnitArgs>
       <NUnitResultFormat Condition="'$(NUnitResultFormat)' == ''">nunit2</NUnitResultFormat>
+      <NUnitArgs Condition="'$(NUnitArgs)' == ''">/trace=$(TestVerbosity)</NUnitArgs>
       <Nunit3Args Condition="'$(UseNUnit3)' == 'true'">--result:TestResult.xml;format=$(NUnitResultFormat)</Nunit3Args>
       <Nunit2Args Condition="'$(UseNUnit3)' != 'true'">/nologo /nodots /noshadow /domain=single</Nunit2Args>
-      <NunitArgs>$(CommonNUnitArgs) $(NUnit2Args) $(Nunit3Args)</NunitArgs>
+      <_NunitArgs>$(NUnitArgs) $(NUnit2Args) $(Nunit3Args)</_NunitArgs>
     </PropertyGroup>
     
     <Exec WorkingDirectory="$(OutDir)"
-        Command="&quot;@(NUnitConsole->'%(FullPath)')&quot; $(NunitArgs) @(TestAssemblies, ' ')" />
+        Command="&quot;@(NUnitConsole->'%(FullPath)')&quot; $(_NunitArgs) @(TestAssemblies, ' ')" />
     <Move SourceFiles="$(OutDir)\TestResult.xml" DestinationFiles="$(TestResults)"/>
   </Target>
   
@@ -118,16 +118,16 @@
       <ReturnTargetCode Condition="'$(CoverageFailOnTargetFail)' == 'true'">-returntargetcode</ReturnTargetCode>
       <OpenCoverArgs>$(RegisterProfiler) -filter:&quot;$(OpenCoverFilter)&quot; -output:&quot;$(OpenCoverOutput)&quot; -nodefaultfilters -mergebyhash -skipautoprops $(ReturnTargetCode) -excludebyattribute:&quot;$(OpenCoverExcludeAttributes)&quot; -excludebyfile:&quot;$(OpenCoverExcludeFiles)&quot; -log:$(CoverageVerbosity)</OpenCoverArgs>
 
-      <CommonNUnitArgs>/framework=$(TargetFrameworkVersion) /trace=$(TestVerbosity)</CommonNUnitArgs>
       <NUnitResultFormat Condition="'$(NUnitResultFormat)' == ''">nunit2</NUnitResultFormat>
+      <NUnitArgs Condition="'$(NUnitArgs)' == ''">/trace=$(TestVerbosity)</NUnitArgs>
       <Nunit3Args Condition="'$(UseNUnit3)' == 'true'">--result:TestResult.xml;format=$(NUnitResultFormat)</Nunit3Args>
       <Nunit2Args Condition="'$(UseNUnit3)' != 'true'">/nologo /nodots /noshadow /domain=single</Nunit2Args>
-      <NunitArgs>$(CommonNUnitArgs) $(NUnit2Args) $(Nunit3Args)</NunitArgs>
+      <_NunitArgs>$(NUnitArgs) $(NUnit2Args) $(Nunit3Args)</_NunitArgs>
     </PropertyGroup>
 
     <Exec WorkingDirectory="$(OutDir)"
           IgnoreStandardErrorWarningFormat="true"
-          Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(NUnitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(NunitArgs) @(TestAssemblies, ' ')&quot;" />
+          Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(NUnitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(_NunitArgs) @(TestAssemblies, ' ')&quot;" />
     <Move SourceFiles="$(OutDir)\TestResult.xml" DestinationFiles="$(TestResults)"/>
   </Target>
   

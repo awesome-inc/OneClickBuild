@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace MyLib
 {
@@ -14,5 +15,9 @@ namespace MyLib
             Trace.TraceInformation("SomeUncoveredMethod called");
         }
 
+        public Task<int> SomeTask()
+        {
+            return Task.FromResult(42);
+        }
     }
 }
