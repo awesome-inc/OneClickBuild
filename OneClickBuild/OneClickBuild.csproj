@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Content Include="readme.txt" />
     <None Include="tools\before.sln.targets" />
     <None Include="tools\empty.targets" />
     <None Include="tools\SolutionInfo.cs" />
