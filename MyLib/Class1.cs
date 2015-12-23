@@ -5,14 +5,10 @@ namespace MyLib
 {
     public class Class1
     {
+        // ReSharper disable MemberCanBeMadeStatic.Global
         public void SomeCoveredMethod()
         {
             Trace.TraceInformation("SomeCoveredMethod called");
-        }
-
-        public void SomeUncoveredMethod()
-        {
-            Trace.TraceInformation("SomeUncoveredMethod called");
         }
 
         public Task<int> SomeTask()
