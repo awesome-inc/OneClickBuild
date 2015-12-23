@@ -247,7 +247,7 @@ This is the default behavior but since there may be cases where you want to get 
 
 ### Coverage Upload
 
-[Status badges are cool!](http://awesome-incremented.blogspot.de/2015/05/github-boosting-your-readmemd-with.html).
+[Status badges are cool!](http://awesome-incremented.blogspot.de/2015/05/github-boosting-your-readmemd-with.html)
 To show how well your project is covered by tests you can upload your code coverage statistics using the `CoverageUpload`-target, i.e.
 
     build [project] /t:CoverageUpload /p:CoverAllsToken=[repo_token]
