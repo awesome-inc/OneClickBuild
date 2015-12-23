@@ -4,6 +4,7 @@
   <Target Name="Test" DependsOnTargets="Build;TestWithNunit"/>
   <Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithNUnit"/>
   <Target Name="CoverageReport" DependsOnTargets="Coverage;OpenCoverReport"/>
+  <Target Name="CoverageUpload" DependsOnTargets="Coverage;CoverAllsUpload"/>
   <Target Name="Package" DependsOnTargets="Build;PackageWithNuGet"/>
   <Target Name="Deploy" DependsOnTargets="Build;Package;DeployWithNuGet"/>
 
@@ -21,7 +22,7 @@
   </PropertyGroup>
 
 
-  <!-- NuGet Packaging -->
+  <!-- NuGet -->
   <Target Name="PackageWithNuGet" DependsOnTargets="Build">
     <PropertyGroup>
       <Revision>$(GitVersion_Sha)</Revision>
@@ -29,6 +30,7 @@
 
     <Message Importance="Normal" Condition="!Exists($(NuspecFile))" Text="Skipping target because .nuspec-file is missing (expected '$(NuspecFile)')" />
     <Exec Condition="Exists($(NuspecFile))"
+          ContinueOnError="ErrorAndContinue"
           Command="nuget pack $(NuspecFile) -Properties Version=$(GitVersion_NuGetVersion);Revision=$(Revision);Configuration=$(Configuration)"/>
   </Target>
 
@@ -47,6 +49,7 @@
     <!-- To set API key use "NuGet.exe setApiKey <key> -Source <source>" -->
     <Message Condition="'$(PackageFile)'!='' And Exists($(PackageFile))" Text="Pushing package $(PackageFile) to $(NuGetSourceToDeploy)..." Importance="High"  />
     <Exec Condition="'$(PackageFile)'!='' And Exists($(PackageFile))"
+          ContinueOnError="ErrorAndContinue"
           Command="nuget push $(PackageFile) -Source $(NuGetSourceToDeploy) > NUL" />
   </Target>
 
@@ -72,7 +75,8 @@
     </PropertyGroup>
     
     <Exec WorkingDirectory="$(OutDir)"
-        Command="&quot;@(NUnitConsole->'%(FullPath)')&quot; $(_NunitArgs) @(TestAssemblies, ' ')" />
+          ContinueOnError="ErrorAndContinue"
+          Command="&quot;@(NUnitConsole->'%(FullPath)')&quot; $(_NunitArgs) @(TestAssemblies, ' ')" />
     <Move SourceFiles="$(OutDir)\TestResult.xml" DestinationFiles="$(TestResults)"/>
   </Target>
   
@@ -127,6 +131,7 @@
 
     <Exec WorkingDirectory="$(OutDir)"
           IgnoreStandardErrorWarningFormat="true"
+          ContinueOnError="ErrorAndContinue"
           Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(NUnitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(_NunitArgs) @(TestAssemblies, ' ')&quot;" />
     <Move SourceFiles="$(OutDir)\TestResult.xml" DestinationFiles="$(TestResults)"/>
   </Target>
@@ -141,16 +146,17 @@
   </Target>
   
 
-  <!--Coverage Report -->
-  <Target Name="OpenCoverReport" DependsOnTargets="OpenCoverWithNUnit;PrepareCoverage;SelectReportGenerator">
+  <!-- Coverage Report -->
+  <Target Name="OpenCoverReport" DependsOnTargets="OpenCoverWithNUnit;PrepareCoverageReport;SelectReportGenerator">
     <PropertyGroup>
       <ReportGeneratorArgs>-reports:$(OpenCoverOutput) -targetdir:$(CoverageReportDir) -verbosity:$(CoverageReportVerbosity)</ReportGeneratorArgs>
     </PropertyGroup>
     <Message Condition="'@(TestAssemblies)' == ''" 
          Text="Skipping target since no test assemblies to report coverage on" />
     <Exec Condition="'@(TestAssemblies)' != ''"  
-         Command="@(ReportGenerator->'%(FullPath)') $(ReportGeneratorArgs)"
-         WorkingDirectory="$(OutDir)" />
+          ContinueOnError="ErrorAndContinue"
+          Command="&quot;@(ReportGenerator->'%(FullPath)')&quot; $(ReportGeneratorArgs)"
+          WorkingDirectory="$(OutDir)" />
   </Target>
   
   <Target Name="SelectReportGenerator" Condition="'@(ReportGenerator)'==''">
@@ -161,7 +167,31 @@
       <Output TaskParameter="Result" ItemName="ReportGenerator"/>
     </GetLatest>    
   </Target>
-  
+
+  <!-- Coverage Upload -->
+  <Target Name="CoverAllsUpload" DependsOnTargets="OpenCoverWithNUnit;SelectCoverAllsUploader">
+
+    <Error Condition="'$(CoverallsToken)' == ''" Text="CoverAllsToken not set. See the OneClickBuild README."/>
+
+    <PropertyGroup>
+      <CoverallsUploaderOptions Condition="'$(CoverallsUploaderOptions)' == ''">--opencover *.Coverage.xml --repo-token $(CoverallsToken)</CoverallsUploaderOptions>
+    </PropertyGroup>
+
+    <Exec Command="&quot;@(CoverAllsUploader->'%(FullPath)')&quot; $(CoverallsUploaderOptions)"
+          ContinueOnError="ErrorAndContinue"
+          WorkingDirectory="$(TestResultsDir)" />   
+    
+  </Target>
+
+  <Target Name="SelectCoverAllsUploader" Condition="'@(CoverAllsUploader)'==''">
+    <ItemGroup>
+      <CoverAllsUploaderFiles Include="$(SolutionDir)packages\coveralls.io.*\tools\coveralls.net.exe"/>
+    </ItemGroup>
+    <GetLatest Files="@(CoverAllsUploaderFiles)">
+      <Output TaskParameter="Result" ItemName="CoverAllsUploader"/>
+    </GetLatest>
+  </Target>
+
 
   <!-- Helper targets -->
   <!-- helper target to get the names of the assemblies to test -->
@@ -176,11 +206,11 @@
     <MakeDir Directories="$(TestResultsDir)" Condition="'@(TestAssemblies)' != '' And !Exists($(TestResultsDir))"/>
   </Target>
   <!-- helper target to create a directory for the project test coverage results -->
-  <Target Name="PrepareCoverage" Condition="'@(TestAssemblies)' != ''">
+  <Target Name="PrepareCoverageReport" Condition="'@(TestAssemblies)' != ''">
     <MakeDir Directories="$(CoverageReportDir)" Condition="!Exists($(CoverageReportDir))"/>
     <Delete Files="$(CoverageReportDir)" />
   </Target>
-
+  
   <!-- import custom user solution targets -->
   <Target Name="EnsureOneClickBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
