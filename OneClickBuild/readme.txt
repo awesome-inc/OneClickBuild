@@ -15,19 +15,19 @@ build jobs reduce to the same one-liner you can use in development.
 
 Steps after 1st time installation:
 
-1) Copy 'OneClickBuild\tools' files to your solution root folder. 
+1) Copy `OneClickBuild\tools` files to your solution root folder. 
 
-    copy .\packages\OneClickBuild.1.5.0.0\tools\*.*
+    copy .\packages\OneClickBuild.[version]\tools\*.*
 
-2) Rename 'before.sln.targets' to 'before.[solutionfilename].sln.targets'.
+2) Rename `before.sln.targets` to `before.[solutionfilename].sln.targets`.
 
     ren before.sln.targets before.[solutionname].sln.targets
 
-3) Add files as solution items to so you're aware of the files in Visual Studio as well.
+3) Add files as solution items to so you are aware of the files in Visual Studio as well.
 
-4) Complete 'SolutionInfo.cs' with e.g. trademark, company & copyright info.
+4) Complete `SolutionInfo.cs` with e.g. trademark, company & copyright info.
 
-5) Remove duplicate assembly attributes in your 'Properties\AssemblyInfo.cs', i.e.
+5) Remove duplicate assembly attributes in your `Properties\AssemblyInfo.cs`, i.e.
 
 		[assembly: AssemblyDescription("")]
 		[assembly: AssemblyConfiguration("")]
@@ -42,17 +42,16 @@ Steps after 1st time installation:
 
 Finally, do a test build. In your solution folder type
 
-	build
+    build
 
-and you should get a clean 'Release' build with version and git commit info attached
-to your output assemblies (see 'File -> Properties -> Details').
+and you should get a clean `Release` build with version and git commit info attached
+to your output assemblies (see `File -> Properties -> Details`).
 
 Optionally you might find it helpful to wrap up on GitVersion:
-   - http://gitversion.readthedocs.org/en/latest/usage/#command-line
 
-
+   - [GitVersion / Usage / Command Line (Docs)](http://gitversion.readthedocs.org/en/latest/usage/#command-line)
 
 That's it. Enjoy.
 
 If you have any issues or feature requests with OneClickBuild please raise them 
-with the project owners on https://github.com/awesome-inc/OneClickBuild.
+with the project owners on [awesome-inc/OneClickBuild](https://github.com/awesome-inc/OneClickBuild).
