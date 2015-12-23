@@ -4,8 +4,9 @@
     <id>OneClickBuild</id>
     <version>$Version$</version>
     <title>OneClickBuild</title>
-    <authors>mkoertgen,tmentzel</authors>
-    <owners>mkoertgen,tmentzel</owners>
+    <authors>Awesome Incremented and Contributors</authors>
+    <owners>Awesome Incremented and Contributors</owners>
+    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Simplify your build, run tests and coverage.</description>
     <summary>
@@ -20,14 +21,16 @@ A new member coming to your team does not require anything to compile, run test,
 This makes it also perfectly suitable for continuous integration since your build jobs
 reduce to the same one-liner you can use in development.
     </summary>
-    <copyright/>
+    <copyright>Copyright © 2015 All Rights Reserved.</copyright>
+    <developmentDependency>true</developmentDependency>
     <releaseNotes>Revision: $Revision$</releaseNotes>
-    <projectUrl>https://github.com/mkoertgen/OneClickBuild</projectUrl>
+    <projectUrl>https://github.com/awesome-inc/OneClickBuild</projectUrl>
     <dependencies>
       <dependency id="GitVersionTask" version="3.3.0" />
-      <dependency id="NUnit.Runners" version="2.6.4" />
+      <dependency id="NUnit.Runners" version="3.0.1" />
       <dependency id="OpenCover" version="4.6.166" />
-      <dependency id="ReportGenerator" version="2.2.0" />
+      <dependency id="ReportGenerator" version="2.3.5" />
+      <dependency id="coveralls.io" version="1.3.4" />
     </dependencies>    
     <references></references>
     <tags>continuous integration</tags>
