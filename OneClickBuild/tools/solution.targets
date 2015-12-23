@@ -56,8 +56,13 @@
 	</PropertyGroup>
 	-->
 
+	<!--## Specifying your repository token for coveralls.io
+	<PropertyGroup>
+		<CoverAllsToken>[your repo token]</CoverAllsToken>
+	</PropertyGroup>
+        -->
 
-	<!-- ## Uncomment	to override the default nuget server to push packages to in the 'Deploy' target
+	<!-- ## Uncomment to override the default nuget server to push packages to in the 'Deploy' target
 	<PropertyGroup>
 		<NugetSourceToDeploy>https://www.nuget.org</NugetSourceToDeploy>
 	</PropertyGroup>

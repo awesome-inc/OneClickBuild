@@ -1,19 +1,22 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/qs1cu14tjvh1j0le?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/oneclickbuild)
-![NuGet Version](https://img.shields.io/nuget/v/OneClickBuild.svg?style=flat-square) 
-![NuGet Version](https://img.shields.io/nuget/dt/OneClickBuild.svg?style=flat-square) 
+[![NuGet](https://img.shields.io/nuget/v/OneClickBuild.svg?style=flat-square)](https://www.nuget.org/packages/OneClickBuild/) 
+[![Nuget](https://img.shields.io/nuget/vpre/oneclickbuild.svg)](https://www.nuget.org/packages/OneClickBuild/)
+[![NuGet](https://img.shields.io/nuget/dt/oneclickbuild.svg?style=flat-square)](https://www.nuget.org/packages/OneClickBuild/) 
 [![Issue Stats](http://issuestats.com/github/awesome-inc/OneClickBuild/badge/pr)](http://issuestats.com/github/awesome-inc/OneClickBuild)
+[![Coverage Status](https://coveralls.io/repos/awesome-inc/OneClickBuild/badge.svg?branch=develop&service=github)](https://coveralls.io/github/awesome-inc/OneClickBuild)
 
 # OneClickBuild
 
-The *OneClickBuild* package includes a simple `build.bat` and msbuild targets bringing you closer to the famous *1-Click-Build*. 
+The *OneClickBuild* package includes a simple `build.bat` and msbuild targets bringing you closer to the famous *1-Click-Build*.
 
-The `build.bat` shortcuts to MSBuild, the targets include 
+The `build.bat` shortcuts to MSBuild including targets for 
 
-- solution wide assembly version and assembly info files,
-- git versioning,
-- running tests (with NUnit), 
-- computing code coverage (with OpenCover) and
-- NuGet packaging and pushing.
+- [versioning](#versioning) ([GitVersion](https://github.com/GitTools/GitVersion))
+- [running tests](#running-tests-nunit) ([NUnit](https://github.com/nunit)), 
+- [code coverage](#getting-code-coverage-opencover) ([OpenCover](https://github.com/opencover/opencover)),
+- [coverage reporting](#coverage-report) ([ReportGenerator]()),
+- [uploading coverage](#coverage-upload) ([coveralls.io](https://coveralls.io/)) and
+- [NuGet deployment](#nuget-deployment) to [NuGet](https://www.nuget.org/).
 
 The package aims to reduce dependencies on pre-installed external tools by getting the runners directly from NuGet. The only thing you need is
 	
@@ -22,6 +25,8 @@ The package aims to reduce dependencies on pre-installed external tools by getti
 
 A new member coming to your team does not require any special tooling to compile, run tests, etc.
 This makes it also perfectly suitable for continuous integration since your build jobs reduce to the same one-liner you can use in development.
+
+**Note:** This is quite similar to how the .NET CoreCLR Team manages their build process, as posted by Stephen Cleary in [Continuous Integration and Code Coverage for Open Source .NET CoreCLR Projects](http://blog.stephencleary.com/2015/03/continuous-integration-code-coverage-open-source-net-coreclr-projects.html).
 
 ## Getting started
 
@@ -75,11 +80,12 @@ with the project owners on [GitHub](https://github.com/awesome-inc/OneClickBuild
 
 OneClickBuild brings the following additional build targets
 
-- **Test**: Runs tests, default runner: [NUnit](http://www.nunit.org/)
-- **Coverage**: Computes (test/code) coverage, default tool: [OpenCover](http://opencover.codeplex.com/)
-- **CoverageReport**: Generates HTML reports from code coverage output, default tool: [ReportGenerator](https://reportgenerator.codeplex.com/)
-- **Package**: Packages the project, default: [nuget pack](http://docs.nuget.org/docs/creating-packages/creating-and-publishing-a-package#Creating_a_Package)
-- **Deploy**: Deploys the project package, default: [nuget push](http://docs.nuget.org/docs/creating-packages/creating-and-publishing-a-package)
+- [**Test**](#running-tests-nunit): Runs tests. Default runner [NUnit](http://www.nunit.org/)
+- [**Coverage**](#getting-code-coverage-opencover): Computes test/code coverage. Default: [OpenCover](https://github.com/OpenCover/opencover)
+- [**CoverageReport**](#coverage-report): Generates HTML reports from code coverage. Default: [ReportGenerator](https://github.com/danielpalme/ReportGenerator)
+- [**CoverageUpload**](#coverage-upload): Uploads code coverage statistics. Default: [coveralls.io](https://coveralls.io/)
+- **Package**: Packages the project, Default: [nuget pack](http://docs.nuget.org/docs/creating-packages/creating-and-publishing-a-package#Creating_a_Package)
+- **Deploy**: Deploys the project package, Default: [nuget push](http://docs.nuget.org/docs/creating-packages/creating-and-publishing-a-package)
  
 ## Usage Examples
 
@@ -191,13 +197,13 @@ Additionally, you can set the [NUnit XML output format](http://nunit.org/index.p
 
 In order to preserve compatibility to other tools like Jenkins & Sonar, the default is to use the legacy NUnit 2 format (`nunit2`). 
 
-When using NUnit 3 throughout all projects in your solution (recommende), a good place to set these properties is the `solution.targets`. 
+When using NUnit 3 throughout all projects in your solution (recommended), a good place to set these properties is the `solution.targets`. 
 
 If you desperately need mixing NUnit 2 & 3 in your projects, then set these properties only in the project specific targets for the projects using NUnit 3.
 
 ### Getting Code Coverage (OpenCover)
 
-The target `Coverage` executes [OpenCover](http://opencover.codeplex.com/) targeting [NUnit](http://www.nunit.org/).
+The target `Coverage` executes [OpenCover](https://github.com/OpenCover/opencover) targeting [NUnit](http://www.nunit.org/).
 Run from the command line using
 
 	build MyLib.Tests\MyLib.Tests.csproj /t:Coverage
@@ -220,6 +226,7 @@ or the [OpenCover Usage Wiki (GitHub)](https://github.com/opencover/opencover/wi
 - OneClickBuild v1.3 supports the standard `[ExcludeFromCodeCoverage]` attribute (see [MSDN](http://msdn.microsoft.com/en-us/library/dd984116(VS.100).aspx)). This is handy for generated code snippets or [MiniMods](https://github.com/minimod/minimods).
 
 ### Coverage Report
+
 To generate a HTML report from the coverage xml use the `CoverageReport`-target, i.e.
 
 	build [project] /t:CoverageReport
@@ -237,6 +244,17 @@ This is the default behavior but since there may be cases where you want to get 
 	<PropertyGroup>
 		<CoverageFailOnTargetFail>false</CoverageFailOnTargetFail>
 	</PropertyGroup>
+
+### Coverage Upload
+
+[Status badges are cool!](http://awesome-incremented.blogspot.de/2015/05/github-boosting-your-readmemd-with.html).
+To show how well your project is covered by tests you can upload your code coverage statistics using the `CoverageUpload`-target, i.e.
+
+    build [project] /t:CoverageUpload /p:CoverAllsToken=[repo_token]
+
+For this you need to additional specify the `CoverAllsToken` property which you can find on your `coveralls.io` page. Note that CoverAlls.io states that it and will be free for open source projects on their [Pricing page](https://coveralls.io/pricing).
+
+Again, you can specify the property on the command line like in the example above or anywhere in your project or solution specific targets files. We recommend the `solution.targets`. 
 
 ### Project-specific targets
 
@@ -297,7 +315,7 @@ Note that you need to generate a HTML report from the OpenCover results using
 
 	build [project] /t:CoverageReport
 
-### NuGet Packaging and Pushing
+### NuGet Deployment
 
 To build a [NuGet](http://en.wikipedia.org/wiki/NuGet) package from your library simply add a `Package.nuspec` file to your project and build the `Package`-target, e.g.
 
