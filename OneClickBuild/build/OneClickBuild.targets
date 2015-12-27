@@ -26,12 +26,13 @@
   <Target Name="PackageWithNuGet" DependsOnTargets="Build">
     <PropertyGroup>
       <Revision>$(GitVersion_Sha)</Revision>
+      <PackageVersion Condition="'$(PackageVersion)'==''">$(GitVersion_NuGetVersion)</PackageVersion>
     </PropertyGroup>
 
     <Message Importance="Normal" Condition="!Exists($(NuspecFile))" Text="Skipping target because .nuspec-file is missing (expected '$(NuspecFile)')" />
     <Exec Condition="Exists($(NuspecFile))"
           ContinueOnError="ErrorAndContinue"
-          Command="nuget pack $(NuspecFile) -Properties Version=$(GitVersion_NuGetVersion);Revision=$(Revision);Configuration=$(Configuration)"/>
+          Command="nuget pack $(NuspecFile) -Properties Version=$(PackageVersion);Revision=$(Revision);Configuration=$(Configuration)"/>
   </Target>
 
   <Target Name="DeployWithNuGet" DependsOnTargets="PackageWithNuGet">
