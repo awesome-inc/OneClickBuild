@@ -6,7 +6,7 @@
   <Target Name="CoverageReport" DependsOnTargets="Coverage;OpenCoverReport"/>
   <Target Name="CoverageUpload" DependsOnTargets="Coverage;CoverAllsUpload"/>
   <Target Name="Package" DependsOnTargets="Build;PackageWithNuGet"/>
-  <Target Name="Deploy" DependsOnTargets="Build;Package;DeployWithNuGet"/>
+  <Target Name="Deploy" DependsOnTargets="Build;Package;DeployWithNuGet;Publish"/>
 
   <PropertyGroup>
     <!-- Use AppVeyor Build-Number, cf.: http://www.appveyor.com/docs/environment-variables -->
@@ -21,17 +21,36 @@
     <NuGetSourceToDeploy Condition="'$(NuGetSourceToDeploy)'==''">https://www.nuget.org</NuGetSourceToDeploy>
   </PropertyGroup>
 
+  <!-- ClickOnce Versioning -->
+  <Target Name="SetSetClickOnceVersion" 
+    Condition="'$(ApplicationVersion)'==''"
+    DependsOnTargets="GetVersion" 
+    BeforeTargets="_DeploymentComputeClickOnceManifestInfo">
+    <PropertyGroup>
+       <RevisionNumber Condition="'$(ApplicationRevision)'!=''">$(ApplicationRevision)</RevisionNumber>
+       <RevisionNumber Condition="'$(ApplicationRevision)'==''">$(Build)</RevisionNumber>
+    </PropertyGroup>
+    <CreateProperty Value="$(GitVersion_MajorMinorPatch).$(RevisionNumber)">
+      <Output TaskParameter="Value" PropertyName="ApplicationVersion"/>
+    </CreateProperty>
+    <!-- for VSTO -->
+    <CreateProperty Value="$(ApplicationVersion)">
+      <Output TaskParameter="Value" PropertyName="PublishVersion"/>
+    </CreateProperty>    
+    <Message Text="ClickOnce ApplicationVersion: $(ApplicationVersion)" Importance="High" />
+  </Target>
 
   <!-- NuGet -->
-  <Target Name="PackageWithNuGet" DependsOnTargets="Build">
+  <Target Name="PackageWithNuGet" DependsOnTargets="Build;GetVersion">
     <PropertyGroup>
       <Revision>$(GitVersion_Sha)</Revision>
+      <PackageVersion Condition="'$(PackageVersion)'==''">$(GitVersion_NuGetVersion)</PackageVersion>
     </PropertyGroup>
 
     <Message Importance="Normal" Condition="!Exists($(NuspecFile))" Text="Skipping target because .nuspec-file is missing (expected '$(NuspecFile)')" />
     <Exec Condition="Exists($(NuspecFile))"
           ContinueOnError="ErrorAndContinue"
-          Command="nuget pack $(NuspecFile) -Properties Version=$(GitVersion_NuGetVersion);Revision=$(Revision);Configuration=$(Configuration)"/>
+          Command="nuget pack $(NuspecFile) -Properties Version=$(PackageVersion);Revision=$(Revision);Configuration=$(Configuration)"/>
   </Target>
 
   <Target Name="DeployWithNuGet" DependsOnTargets="PackageWithNuGet">

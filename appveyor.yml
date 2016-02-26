@@ -17,7 +17,7 @@
     - ps: gitversion /l console /output buildserver
     - nuget setapikey %apiKey% -Verbosity quiet
   build_script:
-    - build.bat OneClickBuild\OneClickBuild.csproj /t:CoverageUpload;Deploy /v:m
+    - build.bat /t:CoverageUpload;Deploy /v:m
 #  after_build:
 #    - ps: >-
 #      $wc = New-Object 'System.Net.WebClient'
@@ -36,7 +36,7 @@
   before_build:
     - ps: gitversion /l console /output buildserver
   build_script:
-    - build.bat OneClickBuild\OneClickBuild.csproj /t:CoverageUpload;Package /v:m
+    - build.bat /t:CoverageUpload;Package /v:m
  # after_build:
  # - ps: >-
  #     $wc = New-Object 'System.Net.WebClient'

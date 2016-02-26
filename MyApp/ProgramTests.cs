@@ -64,8 +64,6 @@ namespace MyApp
             Assert.AreEqual(actual.Item2, 0.5);
         }
 
-
         #endregion
-
     }
 }

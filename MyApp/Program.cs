@@ -34,7 +34,6 @@ namespace MyApp
         {
             Console.WriteLine("Acting on instance...");
             instance.SomeCoveredMethod();
-            instance.SomeUncoveredMethod();
         }
     }
 }
