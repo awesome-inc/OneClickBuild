@@ -1,18 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Target Name="Deploy" DependsOnTargets="Publish" />
-
-  <Target Name="MyApp_SetSetClickOnceVersion" 
-    Condition="'$(ApplicationVersion)'==''"
-    AfterTargets="UpdateAssemblyInfo" 
-    BeforeTargets="_DeploymentComputeClickOnceManifestInfo">
-    <CreateProperty Value="$(GitVersion_MajorMinorPatch).$(Build)">
-      <Output TaskParameter="Value" PropertyName="ApplicationVersion"/>
-    </CreateProperty>
-    <Message Text="ApplicationVersion: $(ApplicationVersion)"/>
-  </Target>
-  
   <PropertyGroup>
     <!-- <Build>42</Build> -->
     <CoverageFailOnTargetFail>false</CoverageFailOnTargetFail>
