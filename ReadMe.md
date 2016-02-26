@@ -7,9 +7,9 @@
 
 # OneClickBuild
 
-The *OneClickBuild* package includes a simple `build.bat` and msbuild targets bringing you closer to the famous *1-Click-Build*.
+The **OneClickBuild** package includes a simple `build.bat` and *MSBuild targets* bringing you closer to the famous *1-Click-Build*.
 
-The `build.bat` shortcuts to MSBuild including targets for 
+The `build.bat` shortcuts to **MSBuild** including targets for 
 
 - [versioning](#versioning) ([GitVersion](https://github.com/GitTools/GitVersion))
 - [running tests](#running-tests-nunit) ([NUnit](https://github.com/nunit)), 
@@ -18,7 +18,7 @@ The `build.bat` shortcuts to MSBuild including targets for
 - [uploading coverage](#coverage-upload) ([coveralls.io](https://coveralls.io/)) and
 - [NuGet deployment](#nuget-deployment) to [NuGet](https://www.nuget.org/).
 
-The package aims to reduce dependencies on pre-installed external tools by getting the runners directly from NuGet. The only thing you need is
+The package aims to reduce dependencies on preinstalled external tools by getting the runners directly from NuGet. The only thing you need is
 	
 1. .NET for MSBuild (preinstalled since Windows 7) and
 2. `NuGet.exe` (in your path)
@@ -30,14 +30,14 @@ This makes it also perfectly suitable for continuous integration since your buil
 
 ## Getting started
 
-The OneClickBuild package is available via package name `OneClickBuild`.
-To install OneClickBuild, run the following command in the Package Manager Console
+The **OneClickBuild** package is available as NuGet package `OneClickBuild`.
+To install **OneClickBuild**, run the following command in the Package Manager Console
 
 	PM> Install-Package OneClickBuild
 
 Steps after 1st time installation:
 
-1.  Copy 'OneClickBuild\tools' files to your solution root folder. 
+1.  Copy `OneClickBuild\tools` files to your solution root folder. 
 
     copy .\packages\OneClickBuild.[version]\tools\*.*
 
@@ -49,13 +49,13 @@ Steps after 1st time installation:
 
 4. Complete `SolutionInfo.cs` with e.g. trademark, company & copyright info.
 
-5. Remove duplicate assembly attributes in your 'Properties\AssemblyInfo.cs', i.e.
+5. Remove duplicate assembly attributes in your `Properties\AssemblyInfo.cs`, i.e.
 
 		[assembly: AssemblyDescription("")]
 		[assembly: AssemblyConfiguration("")]
 		[assembly: AssemblyCompany("")]
 		[assembly: AssemblyProduct("...")]
-		[assembly: AssemblyCopyright("Copyright ©  2015")]
+		[assembly: AssemblyCopyright("Copyright ©  2016")]
 		[assembly: AssemblyTrademark("")]
 		[assembly: AssemblyCulture("")]
 		[assembly: ComVisible(false)]
@@ -71,7 +71,7 @@ to your output assemblies (see *File -> Properties -> Details*).
 
 Optionally you might find it helpful to wrap up on using [GitVersion](http://gitversion.readthedocs.org/en/latest/usage/#command-line)
 
-That's it. Enjoy.
+That's it. Enjoy!
 
 If you have any issues or feature requests with **OneClickBuild** please raise them 
 with the project owners on [GitHub](https://github.com/awesome-inc/OneClickBuild).
@@ -118,7 +118,18 @@ When using git workflows like [GitFlow](http://nvie.com/posts/a-successful-git-b
 However, if you really need to, you can set the semantic version of your project explicitly in `GitVersionConfig.yaml`.
 See [GitVersion Usage](http://gitversion.readthedocs.org/en/latest/usage/) for more details.
 
-### Including version number to your project
+#### ClickOnce versioning
+
+With OneClickBuild 1.9.x automatic ClickOnce versioning is supported out of the box.
+To make this work just avoid setting the publishing version explicitly, i.e. remove
+the following properties from your `.csproj`
+
+    <ApplicationVersion>...</ApplicationVersion>
+    <ApplicationRevision>...</ApplicationRevision>
+
+Note that Visual Studio will add these properties back anytime you open the [Publish Wizard](https://msdn.microsoft.com/en-us/library/31kztyey.aspx) or the [Publish page](https://msdn.microsoft.com/en-us/library/ff699224.aspx)
+
+### SolutionInfo.cs: Global AssemblyInfo for all projects in your solution
 
 Most solution wide settings for all assemblies are stored in `SolutionInfo.cs` except of the version information, which is included using [GitVersion](https://github.com/GitTools/GitVersion).
 
@@ -186,7 +197,7 @@ for applications. This presumes that you may have tests included in your product
 
 #### Using NUnit3
 
-As of version 1.7.x OneClickBuild optionally supports NUnit3. To enable NUnit3 update the `NUnit.Runners` package to version 3.x. Then set the
+As of version 1.7.x OneClickBuild supports [NUnit3](https://github.com/nunit/nunit). To enable NUnit3 update the `NUnit.Runners` package to version 3.x. Then set the
 `UseNUnit3` property to `true`, i.e.
 
     <UseNUnit3>true</UseNUnit3>
@@ -443,9 +454,28 @@ You may have set `ProjectDependencies` in your solution file which you should re
 
 ### **Test** target fails on Windows 10 with exit code -2146232576.
 
-NUnit runners need .NET 3.5 so you need to turn on this Windows Feature. 
+NUnit runners need .NET 3.5 so you need to turn on this Windows Feature.
 
 ### **Deploy** target fails with message `error : Build number not set. See the OneClickBuild README.`
 
 You did not specify a build number which usually indicates that you are not inside a CI build.
-See section [Deploying locally vs. CI server](#ci-deploy). 
+See section [Deploying locally vs. CI server](#ci-deploy).
+
+### **Package** target for pre-release NuGet packages (features) fails with message `1.0.0-123-foo' is not a valid version string.`
+
+This occurs for branch names 
+
+- beginning with a number, e.g. issue or ticket number
+- configured without a GitVersion tag prefix, e.g. feature branches + GitVersion < 4.x
+
+When using issue trackers (e.g. JIRA) it is common practice to prefix the branch name with the issue number so branch and issue can be easily synced.
+
+For branches without a GitVersion tag prefix this causes the prelease-tag of the NuGet-version to begin with a number. 
+
+As of NuGet 2.9 this can be handled by all NuGet operations except `nuget pack`, cf. [NuGet issue #1743](https://github.com/NuGet/Home/issues/1743).
+
+One way to resolve this is to configure prerelease-tag. For example, a good configuration for feature branches is
+
+    tag: alpha.{BranchName}
+
+Note that using the branch name is supported since [GitVersion 3.4.0](https://github.com/GitTools/GitVersion/releases/tag/v3.4.0). In fact, using `alpha` as a prerelease tag for feature branches is so useful that it is [proposed to be the default in GitVersion 4.0](https://github.com/GitTools/GitVersion/issues/664#issuecomment-177194815)
