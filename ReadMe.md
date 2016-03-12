@@ -7,6 +7,8 @@
 
 # OneClickBuild
 
+[![Join the chat at https://gitter.im/awesome-inc/OneClickBuild](https://badges.gitter.im/awesome-inc/OneClickBuild.svg)](https://gitter.im/awesome-inc/OneClickBuild?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 The **OneClickBuild** package includes a simple `build.bat` and *MSBuild targets* bringing you closer to the famous *1-Click-Build*.
 
 The `build.bat` shortcuts to **MSBuild** including targets for 
