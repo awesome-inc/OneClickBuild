@@ -2,6 +2,10 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
+    <IsCSharpProject Condition="$(MSBuildProjectFile.EndsWith('.csproj'))" >true</IsCSharpProject>
+    <!-- Disable GitVersion assembly info for non-cs projects -->
+    <UpdateAssemblyInfo Condition="'$(IsCSharpProject)' != 'true'">false</UpdateAssemblyInfo>
+
     <!-- Use AppVeyor Build-Number, cf.: http://www.appveyor.com/docs/environment-variables -->
     <Build Condition="'$(CI)' == 'True'">$(APPVEYOR_BUILD_NUMBER)</Build>
     <!-- Use Build-Number from Jenkins or TeamCity -->
@@ -12,6 +16,7 @@
 
     <NuspecFile Condition="'$(NuspecFile)'==''">$(ProjectDir)Package.nuspec</NuspecFile>
     <NuGetSourceToDeploy Condition="'$(NuGetSourceToDeploy)'==''">https://www.nuget.org</NuGetSourceToDeploy>
+
   </PropertyGroup>
 
   <!-- Targets -->
