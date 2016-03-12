@@ -96,15 +96,24 @@
     <Exec WorkingDirectory="$(OutDir)"
           ContinueOnError="ErrorAndContinue"
           Command="&quot;@(NUnitConsole->'%(FullPath)')&quot; $(_NunitArgs) @(TestAssemblies, ' ')" />
-    <Move SourceFiles="$(OutDir)\TestResult.xml" DestinationFiles="$(TestResults)"/>
+    <Move SourceFiles="$(OutDir)TestResult.xml" DestinationFiles="$(TestResults)"/>
   </Target>
   
   <Target Name="SelectNUnitConsole" Condition="'@(NUnitConsole)'==''">
     <PropertyGroup>
       <NUnitPath Condition="'$(UseNUnit3)' != 'true' And '$(PlatformTarget)' == 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console-x86.exe</NUnitPath>
       <NUnitPath Condition="'$(UseNUnit3)' != 'true' And '$(PlatformTarget)' != 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console.exe</NUnitPath>
-      <NUnitPath Condition="'$(UseNUnit3)' == 'true'">$(SolutionDir)packages\NUnit.Console.*\tools\nunit3-console.exe</NUnitPath>
+      <NUnitPath Condition="'$(UseNUnit3)' == 'true'">$(SolutionDir)packages\NUnit.Console*\tools\nunit3-console.exe</NUnitPath>
     </PropertyGroup>
+
+    <!--Ensure installed -->
+    <ItemGroup>
+      <AnyNUnitConsole Include="$(NUnitPath)"/>
+    </ItemGroup>
+    <Exec Condition="'@(AnyNUnitConsole)'==''"
+          ContinueOnError="ErrorAndContinue" Command="nuget install NUnit.Console -o $(SolutionDir)packages" />
+
+    <!-- Select most recent NUnit console -->
     <ItemGroup>
       <NUnitConsoleFiles Include="$(NUnitPath)"/>
     </ItemGroup>
@@ -152,18 +161,30 @@
           IgnoreStandardErrorWarningFormat="true"
           ContinueOnError="ErrorAndContinue"
           Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(NUnitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(_NunitArgs) @(TestAssemblies, ' ')&quot;" />
-    <Move SourceFiles="$(OutDir)\TestResult.xml" DestinationFiles="$(TestResults)"/>
+    <Move SourceFiles="$(OutDir)TestResult.xml" DestinationFiles="$(TestResults)"/>
   </Target>
   
   <Target Name="SelectOpenCoverConsole" Condition="'@(OpenCoverConsole)'==''">
+    <PropertyGroup>
+      <_OpenCoverPath>$(SolutionDir)packages\OpenCover.*\tools\OpenCover.Console.exe</_OpenCoverPath>
+    </PropertyGroup>
+    
+    <!--Ensure installed -->
     <ItemGroup>
-      <OpenCoverConsoleFiles Include="$(SolutionDir)packages\OpenCover.*\tools\OpenCover.Console.exe"/>
+      <AnyOpenCover Include="$(_OpenCoverPath)"/>
+    </ItemGroup>
+    <Exec Condition="'@(AnyOpenCover)'==''"
+          ContinueOnError="ErrorAndContinue" Command="nuget install OpenCover -o $(SolutionDir)packages" />
+
+    <!-- Select most recent -->
+    <ItemGroup>
+      <OpenCoverConsoleFiles Include="$(_OpenCoverPath)"/>
     </ItemGroup>
     <GetLatest Files="@(OpenCoverConsoleFiles)">
       <Output TaskParameter="Result" ItemName="OpenCoverConsole"/>
     </GetLatest>    
   </Target>
-  
+
 
   <!-- Coverage Report -->
   <Target Name="OpenCoverReport" DependsOnTargets="OpenCoverWithNUnit;PrepareCoverageReport;SelectReportGenerator">
@@ -179,8 +200,20 @@
   </Target>
   
   <Target Name="SelectReportGenerator" Condition="'@(ReportGenerator)'==''">
+    <PropertyGroup>
+      <_ReportGeneratorPath>$(SolutionDir)packages\ReportGenerator.*\tools\ReportGenerator.exe</_ReportGeneratorPath>
+    </PropertyGroup>
+
+    <!--Ensure installed -->
     <ItemGroup>
-      <ReportGeneratorFiles Include="$(SolutionDir)packages\ReportGenerator.*\tools\ReportGenerator.exe"/>
+      <AnyReportGenerator Include="$(_ReportGeneratorPath)"/>
+    </ItemGroup>
+    <Exec Condition="'@(AnyReportGenerator)'==''"
+          ContinueOnError="ErrorAndContinue" Command="nuget install ReportGenerator -o $(SolutionDir)packages" />
+
+    <!-- Select most recent -->
+    <ItemGroup>
+      <ReportGeneratorFiles Include="$(_ReportGeneratorPath)"/>
     </ItemGroup>
     <GetLatest Files="@(ReportGeneratorFiles)">
       <Output TaskParameter="Result" ItemName="ReportGenerator"/>
@@ -203,8 +236,20 @@
   </Target>
 
   <Target Name="SelectCoverAllsUploader" Condition="'@(CoverAllsUploader)'==''">
+    <PropertyGroup>
+      <_CoverAllsPath>$(SolutionDir)packages\coveralls.io.*\tools\coveralls.net.exe</_CoverAllsPath>
+    </PropertyGroup>
+
+    <!--Ensure installed -->
     <ItemGroup>
-      <CoverAllsUploaderFiles Include="$(SolutionDir)packages\coveralls.io.*\tools\coveralls.net.exe"/>
+      <AnyCoverAlls Include="$(_CoverAllsPath)"/>
+    </ItemGroup>
+    <Exec Condition="'@(AnyCoverAlls)'==''"
+          ContinueOnError="ErrorAndContinue" Command="nuget install coveralls.io -o $(SolutionDir)packages" />
+
+    <!-- Select most recent -->
+    <ItemGroup>
+      <CoverAllsUploaderFiles Include="$(_CoverAllsPath)"/>
     </ItemGroup>
     <GetLatest Files="@(CoverAllsUploaderFiles)">
       <Output TaskParameter="Result" ItemName="CoverAllsUploader"/>
