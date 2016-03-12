@@ -60,9 +60,9 @@
 
     <PropertyGroup>
       <PackageVersion Condition="'$(PackageVersion)'==''">$(GitVersion_NuGetVersion)</PackageVersion>
-      <PackageId Condition="'$(PackageName)'=='' And Exists('$(ProjectName).$(PackageVersion).nupkg')">$(ProjectName)</PackageId>
-      <PackageId Condition="'$(PackageName)'=='' And Exists('$(AssemblyName).$(PackageVersion).nupkg')">$(AssemblyName)</PackageId>
-      <PackageId Condition="'$(PackageName)'=='' And Exists('$(RootNamespace).$(PackageVersion).nupkg')">$(RootNamespace)</PackageId>
+      <PackageId Condition="'$(PackageId)'=='' And Exists('$(ProjectName).$(PackageVersion).nupkg')">$(ProjectName)</PackageId>
+      <PackageId Condition="'$(PackageId)'=='' And Exists('$(AssemblyName).$(PackageVersion).nupkg')">$(AssemblyName)</PackageId>
+      <PackageId Condition="'$(PackageId)'=='' And Exists('$(RootNamespace).$(PackageVersion).nupkg')">$(RootNamespace)</PackageId>
       <PackageFile>$(PackageId).$(PackageVersion).nupkg</PackageFile>
     </PropertyGroup>
 
