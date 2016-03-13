@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Use XUnit -->
+  <Target Name="Test" DependsOnTargets="Build;TestWithXunit"/>
+  <Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithXUnit"/>
+
+  <!-- Skip 'Deploy'. We do not want this sample to get pushed to NuGet  -->
+  <Target Name="Deploy">
+    <Message Text="Skipping 'Deploy' for $(ProjectName)" Importance="High" />
+  </Target>
+
+</Project>
