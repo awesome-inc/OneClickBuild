@@ -380,19 +380,18 @@ Here is a simplified version of the `Package.nuspec` that is used by `OneClickBu
 		<id>OneClickBuild</id>
 		<version>$Version$</version>
 		<title>OneClickBuild</title>
-		<authors>mkoertgen,tmentzel</authors>
-		<owners>mkoertgen,tmentzel</owners>
+	    <authors>Awesome Incremented and Contributors</authors>
+	    <owners>Awesome Incremented and Contributors</owners>
+	    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>Simplify your build, run tests and coverage.</description>
 		<summary>...</summary>
-		<copyright/>
-		<releaseNotes>Revision: $Revision$</releaseNotes>
-		<projectUrl>https://github.com/mkoertgen/OneClickBuild</projectUrl>
+	    <copyright>Copyright © 2016 All Rights Reserved.</copyright>
+	    <developmentDependency>true</developmentDependency>
+	    <releaseNotes>Revision: $Revision$</releaseNotes>
+	    <projectUrl>https://github.com/awesome-inc/OneClickBuild</projectUrl>
 		<dependencies>
-	      <dependency id="GitVersionTask" version="3.1.1" />
-	      <dependency id="NUnit.Runners" version="2.6.4" />
-	      <dependency id="OpenCover" version="4.6.166" />
-	      <dependency id="ReportGenerator" version="2.2.0" />
+	      <dependency id="GitVersionTask" version="3.4.1" />
 		</dependencies>    
 		<references></references>
 		<tags>continuous integration</tags>
