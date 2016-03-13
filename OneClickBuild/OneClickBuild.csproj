@@ -37,6 +37,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="OneClickBuild.targets" />
     <None Include="packages.config" />
     <Content Include="readme.txt" />
     <None Include="tools\before.sln.targets" />
