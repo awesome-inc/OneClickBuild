@@ -8,11 +8,11 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("Release")]
 #endif
 
-[assembly: AssemblyDescription(@"© Awesome Incremented 2015")]
+[assembly: AssemblyDescription(@"© Awesome Incremented 2016")]
 
 [assembly: AssemblyCompany("Awesome Incremented")]
 [assembly: AssemblyProduct("OneClickBuild")]
-[assembly: AssemblyCopyright("Copyright © Awesome Incremented 2015")]
+[assembly: AssemblyCopyright("Copyright © Awesome Incremented 2016")]
 [assembly: AssemblyTrademark("Awesome Incremented")]
 [assembly: AssemblyCulture("")]
 

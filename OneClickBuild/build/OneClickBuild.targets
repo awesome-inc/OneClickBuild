@@ -1,14 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Target Name="Test" DependsOnTargets="Build;TestWithNunit"/>
-  <Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithNUnit"/>
-  <Target Name="CoverageReport" DependsOnTargets="Coverage;OpenCoverReport"/>
-  <Target Name="CoverageUpload" DependsOnTargets="Coverage;CoverAllsUpload"/>
-  <Target Name="Package" DependsOnTargets="Build;PackageWithNuGet"/>
-  <Target Name="Deploy" DependsOnTargets="Build;Package;DeployWithNuGet;Publish"/>
-
   <PropertyGroup>
+    <IsCSharpProject Condition="$(MSBuildProjectFile.EndsWith('.csproj'))" >true</IsCSharpProject>
+    <!-- Disable GitVersion assembly info for non-cs projects -->
+    <UpdateAssemblyInfo Condition="'$(IsCSharpProject)' != 'true'">false</UpdateAssemblyInfo>
+
     <!-- Use AppVeyor Build-Number, cf.: http://www.appveyor.com/docs/environment-variables -->
     <Build Condition="'$(CI)' == 'True'">$(APPVEYOR_BUILD_NUMBER)</Build>
     <!-- Use Build-Number from Jenkins or TeamCity -->
@@ -19,16 +16,26 @@
 
     <NuspecFile Condition="'$(NuspecFile)'==''">$(ProjectDir)Package.nuspec</NuspecFile>
     <NuGetSourceToDeploy Condition="'$(NuGetSourceToDeploy)'==''">https://www.nuget.org</NuGetSourceToDeploy>
+
   </PropertyGroup>
 
+  <!-- Targets -->
+  <Target Name="Test" DependsOnTargets="Build;TestWithNunit"/>
+  <Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithNUnit"/>
+
+  <Target Name="CoverageReport" DependsOnTargets="Coverage;OpenCoverReport"/>
+  <Target Name="CoverageUpload" DependsOnTargets="Coverage;CoverAllsUpload"/>
+  <Target Name="Package" DependsOnTargets="Build;PackageWithNuGet"/>
+  <Target Name="Deploy" DependsOnTargets="Build;Package;DeployWithNuGet;Publish"/>
+
   <!-- ClickOnce Versioning -->
-  <Target Name="SetSetClickOnceVersion" 
+  <Target Name="SetSetClickOnceVersion"
     Condition="'$(ApplicationVersion)'==''"
-    DependsOnTargets="GetVersion" 
+    DependsOnTargets="GetVersion"
     BeforeTargets="_DeploymentComputeClickOnceManifestInfo">
     <PropertyGroup>
-       <RevisionNumber Condition="'$(ApplicationRevision)'!=''">$(ApplicationRevision)</RevisionNumber>
-       <RevisionNumber Condition="'$(ApplicationRevision)'==''">$(Build)</RevisionNumber>
+      <RevisionNumber Condition="'$(ApplicationRevision)'!=''">$(ApplicationRevision)</RevisionNumber>
+      <RevisionNumber Condition="'$(ApplicationRevision)'==''">$(Build)</RevisionNumber>
     </PropertyGroup>
     <CreateProperty Value="$(GitVersion_MajorMinorPatch).$(RevisionNumber)">
       <Output TaskParameter="Value" PropertyName="ApplicationVersion"/>
@@ -36,7 +43,7 @@
     <!-- for VSTO -->
     <CreateProperty Value="$(ApplicationVersion)">
       <Output TaskParameter="Value" PropertyName="PublishVersion"/>
-    </CreateProperty>    
+    </CreateProperty>
     <Message Text="ClickOnce ApplicationVersion: $(ApplicationVersion)" Importance="High" />
   </Target>
 
@@ -58,12 +65,12 @@
 
     <PropertyGroup>
       <PackageVersion Condition="'$(PackageVersion)'==''">$(GitVersion_NuGetVersion)</PackageVersion>
-      <PackageId Condition="'$(PackageName)'=='' And Exists('$(ProjectName).$(PackageVersion).nupkg')">$(ProjectName)</PackageId>
-      <PackageId Condition="'$(PackageName)'=='' And Exists('$(AssemblyName).$(PackageVersion).nupkg')">$(AssemblyName)</PackageId>
-      <PackageId Condition="'$(PackageName)'=='' And Exists('$(RootNamespace).$(PackageVersion).nupkg')">$(RootNamespace)</PackageId>
+      <PackageId Condition="'$(PackageId)'=='' And Exists('$(ProjectName).$(PackageVersion).nupkg')">$(ProjectName)</PackageId>
+      <PackageId Condition="'$(PackageId)'=='' And Exists('$(AssemblyName).$(PackageVersion).nupkg')">$(AssemblyName)</PackageId>
+      <PackageId Condition="'$(PackageId)'=='' And Exists('$(RootNamespace).$(PackageVersion).nupkg')">$(RootNamespace)</PackageId>
       <PackageFile>$(PackageId).$(PackageVersion).nupkg</PackageFile>
     </PropertyGroup>
-    
+
     <Message Condition="!Exists($(PackageFile))" Text="Skipping target because package file '$(PackageFile)' has not been built for project '$(ProjectName)'" Importance="Normal"  />
     <!-- To set API key use "NuGet.exe setApiKey <key> -Source <source>" -->
     <Message Condition="'$(PackageFile)'!='' And Exists($(PackageFile))" Text="Pushing package $(PackageFile) to $(NuGetSourceToDeploy)..." Importance="High"  />
@@ -92,26 +99,73 @@
       <Nunit2Args Condition="'$(UseNUnit3)' != 'true'">/nologo /nodots /noshadow /domain=single</Nunit2Args>
       <_NunitArgs>$(NUnitArgs) $(NUnit2Args) $(Nunit3Args)</_NunitArgs>
     </PropertyGroup>
-    
+
     <Exec WorkingDirectory="$(OutDir)"
           ContinueOnError="ErrorAndContinue"
           Command="&quot;@(NUnitConsole->'%(FullPath)')&quot; $(_NunitArgs) @(TestAssemblies, ' ')" />
-    <Move SourceFiles="$(OutDir)\TestResult.xml" DestinationFiles="$(TestResults)"/>
+    <Move SourceFiles="$(OutDir)TestResult.xml" DestinationFiles="$(TestResults)"/>
   </Target>
-  
+
   <Target Name="SelectNUnitConsole" Condition="'@(NUnitConsole)'==''">
     <PropertyGroup>
       <NUnitPath Condition="'$(UseNUnit3)' != 'true' And '$(PlatformTarget)' == 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console-x86.exe</NUnitPath>
       <NUnitPath Condition="'$(UseNUnit3)' != 'true' And '$(PlatformTarget)' != 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console.exe</NUnitPath>
-      <NUnitPath Condition="'$(UseNUnit3)' == 'true'">$(SolutionDir)packages\NUnit.Console.*\tools\nunit3-console.exe</NUnitPath>
+      <NUnitPath Condition="'$(UseNUnit3)' == 'true'">$(SolutionDir)packages\NUnit.Console*\tools\nunit3-console.exe</NUnitPath>
     </PropertyGroup>
+
+    <!--Ensure installed -->
+    <ItemGroup>
+      <AnyNUnitConsole Include="$(NUnitPath)"/>
+    </ItemGroup>
+    <Exec Condition="'@(AnyNUnitConsole)'==''"
+          ContinueOnError="ErrorAndContinue" Command="nuget install NUnit.Console -o $(SolutionDir)packages" />
+
+    <!-- Select most recent NUnit console -->
     <ItemGroup>
       <NUnitConsoleFiles Include="$(NUnitPath)"/>
     </ItemGroup>
     <GetLatest Files="@(NUnitConsoleFiles)">
       <Output TaskParameter="Result" ItemName="NUnitConsole"/>
-    </GetLatest>    
+    </GetLatest>
   </Target>
+
+
+  <!--XUnit -->
+  <Target Name="TestWithXunit" DependsOnTargets="PrepareTests;SelectXUnitConsole;_TestWithXunit" />
+
+  <Target Name="_TestWithXunit" Condition="'@(TestAssemblies)' != ''">
+    <PropertyGroup>
+      <XUnitArgs Condition="'$(XUnitArgs)' == ''">-nologo -noappdomain -noshadow -nunit TestResult.xml</XUnitArgs>
+    </PropertyGroup>
+
+    <Exec WorkingDirectory="$(OutDir)"
+          ContinueOnError="ErrorAndContinue"
+          Command="&quot;@(XUnitConsole->'%(FullPath)')&quot; @(TestAssemblies, ' ') $(XunitArgs)" />
+    <Move SourceFiles="$(OutDir)TestResult.xml" DestinationFiles="$(TestResults)"/>
+  </Target>
+
+  <Target Name="SelectXUnitConsole" Condition="'@(XUnitConsole)'==''">
+    <PropertyGroup>
+      <XUnitPath Condition="'$(PlatformTarget)' == 'x86'">$(SolutionDir)packages\xunit.runner.console.*\tools\xunit.console.x86.exe</XUnitPath>
+      <XUnitPath Condition="'$(PlatformTarget)' != 'x86'">$(SolutionDir)packages\xunit.runner.console.*\tools\xunit.console.exe</XUnitPath>
+    </PropertyGroup>
+
+    <!--Ensure installed -->
+    <ItemGroup>
+      <AnyXUnitConsole Include="$(XUnitPath)"/>
+    </ItemGroup>
+    <Exec Condition="'@(AnyXUnitConsole)'==''"
+          ContinueOnError="ErrorAndContinue" Command="nuget install xunit.runner.console -o $(SolutionDir)packages" />
+
+    <!-- Select most recent -->
+    <ItemGroup>
+      <XUnitConsoleFiles Include="$(XUnitPath)"/>
+    </ItemGroup>
+    <GetLatest Files="@(XUnitConsoleFiles)">
+      <Output TaskParameter="Result" ItemName="XUnitConsole"/>
+    </GetLatest>
+  </Target>
+
 
   <!-- OpenCover -->
   <PropertyGroup>
@@ -152,43 +206,89 @@
           IgnoreStandardErrorWarningFormat="true"
           ContinueOnError="ErrorAndContinue"
           Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(NUnitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(_NunitArgs) @(TestAssemblies, ' ')&quot;" />
-    <Move SourceFiles="$(OutDir)\TestResult.xml" DestinationFiles="$(TestResults)"/>
+    <Move SourceFiles="$(OutDir)TestResult.xml" DestinationFiles="$(TestResults)"/>
   </Target>
-  
+
+  <Target Name="OpenCoverWithXUnit"
+          DependsOnTargets="PrepareTests;SelectXUnitConsole;SelectOpenCoverConsole;_OpenCoverWithXUnit">
+  </Target>
+
+  <Target Name="_OpenCoverWithXUnit" Condition="'@(TestAssemblies)' != ''">
+    <PropertyGroup>
+      <!-- Skip register profiler per user if run by System account -->
+      <RegisterProfiler Condition="!$(USERPROFILE.EndsWith('systemprofile'))">-register:user</RegisterProfiler>
+      <RegisterProfiler Condition="$(USERPROFILE.EndsWith('systemprofile'))">-register</RegisterProfiler>
+      <ReturnTargetCode Condition="'$(CoverageFailOnTargetFail)' == 'true'">-returntargetcode</ReturnTargetCode>
+      <OpenCoverArgs>$(RegisterProfiler) -filter:&quot;$(OpenCoverFilter)&quot; -output:&quot;$(OpenCoverOutput)&quot; -nodefaultfilters -mergebyhash -skipautoprops $(ReturnTargetCode) -excludebyattribute:&quot;$(OpenCoverExcludeAttributes)&quot; -excludebyfile:&quot;$(OpenCoverExcludeFiles)&quot; -log:$(CoverageVerbosity)</OpenCoverArgs>
+      <XUnitArgs Condition="'$(XUnitArgs)' == ''">-nologo -noappdomain -noshadow -nunit TestResult.xml</XUnitArgs>
+    </PropertyGroup>
+
+    <Exec WorkingDirectory="$(OutDir)"
+          IgnoreStandardErrorWarningFormat="true"
+          ContinueOnError="ErrorAndContinue"
+          Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(XUnitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;@(TestAssemblies, ' ') $(XunitArgs)&quot;" />
+    <Move SourceFiles="$(OutDir)TestResult.xml" DestinationFiles="$(TestResults)"/>
+  </Target>
+
+
   <Target Name="SelectOpenCoverConsole" Condition="'@(OpenCoverConsole)'==''">
+    <PropertyGroup>
+      <_OpenCoverPath>$(SolutionDir)packages\OpenCover.*\tools\OpenCover.Console.exe</_OpenCoverPath>
+    </PropertyGroup>
+
+    <!--Ensure installed -->
     <ItemGroup>
-      <OpenCoverConsoleFiles Include="$(SolutionDir)packages\OpenCover.*\tools\OpenCover.Console.exe"/>
+      <AnyOpenCover Include="$(_OpenCoverPath)"/>
+    </ItemGroup>
+    <Exec Condition="'@(AnyOpenCover)'==''"
+          ContinueOnError="ErrorAndContinue" Command="nuget install OpenCover -o $(SolutionDir)packages" />
+
+    <!-- Select most recent -->
+    <ItemGroup>
+      <OpenCoverConsoleFiles Include="$(_OpenCoverPath)"/>
     </ItemGroup>
     <GetLatest Files="@(OpenCoverConsoleFiles)">
       <Output TaskParameter="Result" ItemName="OpenCoverConsole"/>
-    </GetLatest>    
+    </GetLatest>
   </Target>
-  
+
 
   <!-- Coverage Report -->
-  <Target Name="OpenCoverReport" DependsOnTargets="OpenCoverWithNUnit;PrepareCoverageReport;SelectReportGenerator">
+  <Target Name="OpenCoverReport" DependsOnTargets="Coverage;PrepareCoverageReport;SelectReportGenerator">
     <PropertyGroup>
       <ReportGeneratorArgs>-reports:$(OpenCoverOutput) -targetdir:$(CoverageReportDir) -verbosity:$(CoverageReportVerbosity)</ReportGeneratorArgs>
     </PropertyGroup>
-    <Message Condition="'@(TestAssemblies)' == ''" 
+    <Message Condition="'@(TestAssemblies)' == ''"
          Text="Skipping target since no test assemblies to report coverage on" />
-    <Exec Condition="'@(TestAssemblies)' != ''"  
+    <Exec Condition="'@(TestAssemblies)' != ''"
           ContinueOnError="ErrorAndContinue"
           Command="&quot;@(ReportGenerator->'%(FullPath)')&quot; $(ReportGeneratorArgs)"
           WorkingDirectory="$(OutDir)" />
   </Target>
-  
+
   <Target Name="SelectReportGenerator" Condition="'@(ReportGenerator)'==''">
+    <PropertyGroup>
+      <_ReportGeneratorPath>$(SolutionDir)packages\ReportGenerator.*\tools\ReportGenerator.exe</_ReportGeneratorPath>
+    </PropertyGroup>
+
+    <!--Ensure installed -->
     <ItemGroup>
-      <ReportGeneratorFiles Include="$(SolutionDir)packages\ReportGenerator.*\tools\ReportGenerator.exe"/>
+      <AnyReportGenerator Include="$(_ReportGeneratorPath)"/>
+    </ItemGroup>
+    <Exec Condition="'@(AnyReportGenerator)'==''"
+          ContinueOnError="ErrorAndContinue" Command="nuget install ReportGenerator -o $(SolutionDir)packages" />
+
+    <!-- Select most recent -->
+    <ItemGroup>
+      <ReportGeneratorFiles Include="$(_ReportGeneratorPath)"/>
     </ItemGroup>
     <GetLatest Files="@(ReportGeneratorFiles)">
       <Output TaskParameter="Result" ItemName="ReportGenerator"/>
-    </GetLatest>    
+    </GetLatest>
   </Target>
 
   <!-- Coverage Upload -->
-  <Target Name="CoverAllsUpload" DependsOnTargets="OpenCoverWithNUnit;SelectCoverAllsUploader">
+  <Target Name="CoverAllsUpload" DependsOnTargets="Coverage;SelectCoverAllsUploader">
 
     <Error Condition="'$(CoverallsToken)' == ''" Text="CoverAllsToken not set. See the OneClickBuild README."/>
 
@@ -198,13 +298,25 @@
 
     <Exec Command="&quot;@(CoverAllsUploader->'%(FullPath)')&quot; $(CoverallsUploaderOptions)"
           ContinueOnError="ErrorAndContinue"
-          WorkingDirectory="$(TestResultsDir)" />   
-    
+          WorkingDirectory="$(TestResultsDir)" />
+
   </Target>
 
   <Target Name="SelectCoverAllsUploader" Condition="'@(CoverAllsUploader)'==''">
+    <PropertyGroup>
+      <_CoverAllsPath>$(SolutionDir)packages\coveralls.io.*\tools\coveralls.net.exe</_CoverAllsPath>
+    </PropertyGroup>
+
+    <!--Ensure installed -->
     <ItemGroup>
-      <CoverAllsUploaderFiles Include="$(SolutionDir)packages\coveralls.io.*\tools\coveralls.net.exe"/>
+      <AnyCoverAlls Include="$(_CoverAllsPath)"/>
+    </ItemGroup>
+    <Exec Condition="'@(AnyCoverAlls)'==''"
+          ContinueOnError="ErrorAndContinue" Command="nuget install coveralls.io -o $(SolutionDir)packages" />
+
+    <!-- Select most recent -->
+    <ItemGroup>
+      <CoverAllsUploaderFiles Include="$(_CoverAllsPath)"/>
     </ItemGroup>
     <GetLatest Files="@(CoverAllsUploaderFiles)">
       <Output TaskParameter="Result" ItemName="CoverAllsUploader"/>
@@ -229,7 +341,7 @@
     <MakeDir Directories="$(CoverageReportDir)" Condition="!Exists($(CoverageReportDir))"/>
     <Delete Files="$(CoverageReportDir)" />
   </Target>
-  
+
   <!-- import custom user solution targets -->
   <Target Name="EnsureOneClickBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -252,9 +364,10 @@
       <Code Type="Fragment" Language="cs">
         <![CDATA[
         Result = Files.LastOrDefault();
-        ]]></Code>
+        ]]>
+      </Code>
     </Task>
   </UsingTask>
-  
+
   <Import Project="$(SolutionDir)\solution.targets" Condition="Exists('$(SolutionDir)\solution.targets')" />
 </Project>
