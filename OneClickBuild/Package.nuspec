@@ -12,7 +12,7 @@
     <summary>
 This package includes a simple build.bat and MSBuild targets bringing you closer to
 the famous 1-Click-Build. The build.bat shortcuts to MSBuild, the targets include 
-versioning (with GitVersion), running tests (with NUnit) and computing code coverage (with OpenCover).
+versioning (with GitVersion), running tests (NUnit &amp; XUnit) and computing code coverage (OpenCover).
 The package aims to reduce dependencies on pre-installed external tools by getting
 the runners directly from NuGet. The only thing you need is 
   1) .NET for MSBuild (preinstalled since Windows 7) and
@@ -21,7 +21,7 @@ A new member coming to your team does not require anything to compile, run test,
 This makes it also perfectly suitable for continuous integration since your build jobs
 reduce to the same one-liner you can use in development.
     </summary>
-    <copyright>Copyright © 2015 All Rights Reserved.</copyright>
+    <copyright>Copyright © 2016 All Rights Reserved.</copyright>
     <developmentDependency>true</developmentDependency>
     <releaseNotes>Revision: $Revision$</releaseNotes>
     <projectUrl>https://github.com/awesome-inc/OneClickBuild</projectUrl>

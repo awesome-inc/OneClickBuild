@@ -4,9 +4,9 @@ The OneClickBuild package simplifies your build and makes it run everywhere star
 with a simple `build.bat` from the command line
 
 OneClickBuild comprises
-  - Versioning: solution wide assembly versioning (including commit info via GitVersion),
-  - Tests: running tests (with NUnit), 
-  - Coverage: computing code coverage (with OpenCover) and
+  - Versioning: Solution wide assembly versioning (including commit info via GitVersion),
+  - Tests: running tests (NUnit & XUnit), 
+  - Coverage: Computing Test coverage (with OpenCover) and
   - Deploy: NuGet packaging and pushing
 
 A new member coming to your team does not require any special tooling to compile, run tests, etc.
@@ -54,4 +54,4 @@ Optionally you might find it helpful to wrap up on GitVersion:
 That's it. Enjoy.
 
 If you have any issues or feature requests with OneClickBuild please raise them 
-with the project owners on [awesome-inc/OneClickBuild](https://github.com/awesome-inc/OneClickBuild).
+on [awesome-inc/OneClickBuild](https://github.com/awesome-inc/OneClickBuild).

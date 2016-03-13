@@ -14,8 +14,8 @@ The **OneClickBuild** package includes a simple `build.bat` and *MSBuild targets
 The `build.bat` shortcuts to **MSBuild** including targets for 
 
 - [versioning](#versioning) ([GitVersion](https://github.com/GitTools/GitVersion))
-- [running tests](#running-tests-nunit) ([NUnit](https://github.com/nunit)), 
-- [code coverage](#getting-code-coverage-opencover) ([OpenCover](https://github.com/opencover/opencover)),
+- [running tests](#running-tests) ([NUnit](https://github.com/nunit), [XUnit](https://xunit.github.io/)), 
+- [test coverage](#getting-code-coverage-opencover) ([OpenCover](https://github.com/opencover/opencover)),
 - [coverage reporting](#coverage-report) ([ReportGenerator]()),
 - [uploading coverage](#coverage-upload) ([coveralls.io](https://coveralls.io/)) and
 - [NuGet deployment](#nuget-deployment) to [NuGet](https://www.nuget.org/).
@@ -122,9 +122,7 @@ See [GitVersion Usage](http://gitversion.readthedocs.org/en/latest/usage/) for m
 
 #### ClickOnce versioning
 
-With OneClickBuild 1.9.x automatic ClickOnce versioning is supported out of the box.
-To make this work just avoid setting the publishing version explicitly, i.e. remove
-the following properties from your `.csproj`
+With OneClickBuild 1.9.x automatic ClickOnce versioning is supported out of the box. To make this work just avoid setting the publishing version explicitly, i.e. remove the following properties from your `.csproj`
 
     <ApplicationVersion>...</ApplicationVersion>
     <ApplicationRevision>...</ApplicationRevision>
@@ -142,10 +140,21 @@ After installing `OneClickBuild` you need to strip down your original `Propertie
 
 After this, all of your project assemblies contain the same meta information and version number.
 
-### Running Tests (NUnit)
+### Running Tests
 
-The target `Test` executes the NUnit console runner. 
-Run from the command line using
+By default the target `Test` executes the **NUnit** console runner.
+
+    <!-- ## Using NUnit (default) ## -->
+    <Target Name="Test" DependsOnTargets="Build;TestWithNUnit"/>
+    <Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithNUnit"/>
+
+For **XUnit** (since OneClickBuild 1.10) override targets `Test` & `Coverage` like
+
+    <!-- ## Using XUnit (default) ## -->
+    <Target Name="Test" DependsOnTargets="Build;TestWithXUnit"/>
+    <Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithXUnit"/>
+
+To run tests from the command line use
 
 	build MyLib.Tests\MyLib.Tests.csproj /t:Test
 
@@ -159,7 +168,7 @@ The output location for the test results can be set by the properties
 		<TestResults>$(TestResultsDir)$(ProjectName).Tests.xml</TestResults>
 	</PropertyGroup>
 
-You can explicitly define the assemblies for NUnit to run by 
+You can explicitly define the test assemblies to run by 
 including `TestAssemblies`-items in your project like this
 
 	<ItemGroup>
@@ -167,7 +176,7 @@ including `TestAssemblies`-items in your project like this
 	  <TestAssemblies Include="MyLib.Tests.dll"/>
 	</ItemGroup>
 
-This will instruct NUnit to run all tests found in assembly  `MyLib.Tests.dll`.
+This will run all tests found in assembly  `MyLib.Tests.dll`.
 Alternatively, you can use the `TestsProjectPattern`-property to specify a 
 wildcard pattern like this
 
@@ -190,8 +199,8 @@ for applications. This presumes that you may have tests included in your product
 
 **Notes:**
 
-- The `Test`-target will look up the `PlatformTarget`-property to use the correct NUnit runner, i.e.
-`nunit-console.exe` for `x64/AnyCPU` or `nunit-console-x86.exe` for `x86` 
+- The `Test`-target will look up the `PlatformTarget`-property to use the correct runner, i.e.
+`nunit-console.exe` for `x64/AnyCPU` or `nunit-console-x86.exe` for `x86` (likewise for **XUnit**). 
 
 - Multiple patterns can be specified with the `TestsProjectPattern`-property, e.g.
 
@@ -199,7 +208,7 @@ for applications. This presumes that you may have tests included in your product
 
 #### Using NUnit3
 
-As of version 1.7.x OneClickBuild supports [NUnit3](https://github.com/nunit/nunit). To enable NUnit3 update the `NUnit.Runners` package to version 3.x. Then set the
+As of version 1.7.x OneClickBuild supports [NUnit3](https://github.com/nunit/nunit). To enable **NUnit3** update the `NUnit.Runners` package to version 3.x. Then set the
 `UseNUnit3` property to `true`, i.e.
 
     <UseNUnit3>true</UseNUnit3>
@@ -208,16 +217,17 @@ Additionally, you can set the [NUnit XML output format](http://nunit.org/index.p
 
     <NUnitResultFormat>nunit3</NUnitResultFormat>
 
-In order to preserve compatibility to other tools like Jenkins & Sonar, the default is to use the legacy NUnit 2 format (`nunit2`). 
+In order to preserve compatibility to other tools like Jenkins & Sonar, the default is to use the legacy **NUnit2** format (`nunit2`). 
 
-When using NUnit 3 throughout all projects in your solution (recommended), a good place to set these properties is the `solution.targets`. 
+When using **NUnit3** throughout all projects in your solution (recommended), a good place to set these properties is the `solution.targets`. 
 
-If you desperately need mixing NUnit 2 & 3 in your projects, then set these properties only in the project specific targets for the projects using NUnit 3.
+If you desperately need mixing NUnit 2 & 3 in your projects, then set these properties only in the project specific targets for the projects using **NUnit3**.
 
 ### Getting Code Coverage (OpenCover)
 
-The target `Coverage` executes [OpenCover](https://github.com/OpenCover/opencover) targeting [NUnit](http://www.nunit.org/).
-Run from the command line using
+The target `Coverage` executes [OpenCover](https://github.com/OpenCover/opencover) targeting [NUnit](http://www.nunit.org/) (default) or [XUnit](https://xunit.github.io/).
+
+Run from the command line with
 
 	build MyLib.Tests\MyLib.Tests.csproj /t:Coverage
 
@@ -226,17 +236,17 @@ which defaults to
 
 	<OpenCoverOutput>$(TestResultsDir)$(ProjectName).Coverage.xml</OpenCoverOutput>
 
-The default filter for OpenCover is
+The default filter for **OpenCover** is
 
 	<OpenCoverFilter>+[$(AssemblyName)]* -[*]*Tests -[FluentAssertions]*</OpenCoverFilter>
 
-which includes all code from the current assembly and excludes all classes ending with `Tests` and everything from the `FluentAssertions`-assembly which i use extensively in my tests. More details on OpenCover-filters can be found in the
+which includes all code from the current assembly and excludes all classes ending with `Tests` and everything from the `FluentAssertions`-assembly which we use extensively in my tests. More details on **OpenCover-filters** can be found in the
 [OpenCover documentation (pdf)](https://github.com/sawilde/opencover/blob/master/main/OpenCover.Documentation/Usage.pdf?raw=true)
 or the [OpenCover Usage Wiki (GitHub)](https://github.com/opencover/opencover/wiki/Usage).
 
 **Notes:**
 
-- OneClickBuild v1.3 supports the standard `[ExcludeFromCodeCoverage]` attribute (see [MSDN](http://msdn.microsoft.com/en-us/library/dd984116(VS.100).aspx)). This is handy for generated code snippets or [MiniMods](https://github.com/minimod/minimods).
+- OneClickBuild v1.3+ supports the standard `[ExcludeFromCodeCoverage]` attribute (see [MSDN](http://msdn.microsoft.com/en-us/library/dd984116(VS.100).aspx)). This is handy for generated code snippets or [MiniMods](https://github.com/minimod/minimods).
 
 ### Coverage Report
 
