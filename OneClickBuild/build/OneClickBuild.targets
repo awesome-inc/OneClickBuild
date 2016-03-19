@@ -35,7 +35,7 @@
   <Target Name="Deploy" DependsOnTargets="Build;Package;DeployWithNuGet;Publish"/>
 
   <!-- ClickOnce Versioning -->
-  <Target Name="SetSetClickOnceVersion"
+  <Target Name="SetClickOnceVersion"
     Condition="'$(ApplicationVersion)'=='' And '$(NCrunch)' != '1'"
     DependsOnTargets="GetVersion"
     BeforeTargets="_DeploymentComputeClickOnceManifestInfo">

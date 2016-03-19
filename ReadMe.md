@@ -286,33 +286,11 @@ Overriding the default solution targets can be achieved by adding a project spec
     <!-- ## Automatically import project-specific overrides (place this last) -->
 	<Import Project="$(ProjectDir)\$(ProjectName).targets" Condition="Exists('$(ProjectDir)\$(ProjectName).targets')"/>
 
-#### Use case: Override `Deploy` for ClickOnce publishing
+#### Deploying with ClickOnce
 
-Here is an example how to override the `Deploy` target to publish a ClickOnce application (based on issue [#6](https://github.com/awesome-inc/OneClickBuild/issues/6)):
+**Note:** With [#18](https://github.com/awesome-inc/OneClickBuild/issues/18) ClickOnce is now supported out-of-the-box by the target [SetClickOnceVersion](https://github.com/awesome-inc/OneClickBuild/blob/develop/OneClickBuild/build/OneClickBuild.targets#L38). 
 
-    <Target Name="Deploy" DependsOnTargets="Publish"/>
-    <Target Name="Package" BeforeTargets="_CopyFilesToPublishFolder" DependsOnTargets="Build"/>
-
-    <!--cf: https://github.com/awesome-inc/OneClickBuild/issues/6 -->
-    <Target Name="SetClickOnceProperties"
-    Condition="'$(ApplicationVersion)'==''"
-    AfterTargets="UpdateAssemblyInfo" 
-    BeforeTargets="_DeploymentComputeClickOnceManifestInfo">
-    <CreateProperty Value="$(GitVersion_MajorMinorPatch).$(Build)">
-      <Output TaskParameter="Value" PropertyName="ApplicationVersion"/>
-    </CreateProperty>
-    
-    <Message Text="ApplicationVersion (ClickOnce) set to '$(ApplicationVersion)'" />
-  </Target>
-
-**NOTE:** Deploying Microsoft Office plugins with [VSTO](https://en.wikipedia.org/wiki/Visual_Studio_Tools_for_Office) also uses ClickOnce.  For VSTO you need to override `PublishVersion` as well, i.e. add
-
-	<!-- for VSTO -->
-	<CreateProperty Value="$(ApplicationVersion)">
-	  <Output TaskParameter="Value" PropertyName="PublishVersion"/>
-	</CreateProperty>
-
-to the target.
+This includes standard Windows applications as well as Microsoft Office Plugins based on [VSTO](https://en.wikipedia.org/wiki/Visual_Studio_Tools_for_Office).
 
 ### Continuous Integration (Jenkins)
 
