@@ -59,10 +59,10 @@
     </PropertyGroup>
     -->
 
-    <!-- ## Using NUnit 3:
+    <!-- ## Using NUnit 2:
     <PropertyGroup>
-        <UseNUnit3>true</UseNUnit3>
-        <NUnitResultFormat>nunit3</NUnitResultFormat>
+        <UseNUnit2>true</UseNUnit2>
+        <NUnitResultFormat>nunit2</NUnitResultFormat>
     </PropertyGroup>
     -->
 

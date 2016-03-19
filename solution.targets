@@ -7,10 +7,20 @@
     </Compile>
   </ItemGroup>
 
-  <!-- ## Uncomment to customize targets to customize test ##
-  <Target Name="Test" DependsOnTargets="TestWithNUnit"/>
-  <Target Name="Coverage" DependsOnTargets="OpenCoverWithNUnit"/>
-  <Target Name="CoverageReport" DependsOnTargets="OpenCoverReport"/>
+   <!-- ## Uncomment to customize targets ## -->
+    
+    <!-- ## Using NUnit (default) ##
+    <Target Name="Test" DependsOnTargets="Build;TestWithNUnit"/>
+    <Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithNUnit"/>
+    -->
+    
+    <!-- ## Using XUnit (default) ##
+    <Target Name="Test" DependsOnTargets="Build;TestWithXUnit"/>
+    <Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithXUnit"/>
+    -->
+    
+    <!-- ## Default targets ##
+    <Target Name="CoverageReport" DependsOnTargets="OpenCoverReport"/>
   <Target Name="Package" DependsOnTargets="PackageWithNuGet"/>
   <Target Name="Deploy" DependsOnTargets="DeployWithNuGet"/>
   --> 
@@ -49,11 +59,12 @@
   </PropertyGroup>
   -->
 
-  <!-- ## Using NUnit 3 -->
+  <!-- ## Using NUnit 2
   <PropertyGroup>
-    <UseNUnit3>true</UseNUnit3>
-    <NUnitResultFormat>nunit3</NUnitResultFormat>
+    <UseNUnit2>true</UseNUnit2>
+    <NUnitResultFormat>nunit2</NUnitResultFormat>
   </PropertyGroup>
+  -->
 
   <!--## Specifying your repository token for coveralls.io -->
   <PropertyGroup>

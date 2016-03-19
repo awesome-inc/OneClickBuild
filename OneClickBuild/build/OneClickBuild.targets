@@ -95,8 +95,8 @@
     <PropertyGroup>
       <NUnitResultFormat Condition="'$(NUnitResultFormat)' == ''">nunit2</NUnitResultFormat>
       <NUnitArgs Condition="'$(NUnitArgs)' == ''">/trace=$(TestVerbosity)</NUnitArgs>
-      <Nunit3Args Condition="'$(UseNUnit3)' == 'true'">--result:TestResult.xml;format=$(NUnitResultFormat)</Nunit3Args>
-      <Nunit2Args Condition="'$(UseNUnit3)' != 'true'">/nologo /nodots /noshadow /domain=single</Nunit2Args>
+      <Nunit3Args Condition="'$(UseNUnit2)' != 'true'">--result:TestResult.xml;format=$(NUnitResultFormat)</Nunit3Args>
+      <Nunit2Args Condition="'$(UseNUnit2)' == 'true'">/nologo /nodots /noshadow /domain=single</Nunit2Args>
       <_NunitArgs>$(NUnitArgs) $(NUnit2Args) $(Nunit3Args)</_NunitArgs>
     </PropertyGroup>
 
@@ -108,9 +108,9 @@
 
   <Target Name="SelectNUnitConsole" Condition="'@(NUnitConsole)'==''">
     <PropertyGroup>
-      <NUnitPath Condition="'$(UseNUnit3)' != 'true' And '$(PlatformTarget)' == 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console-x86.exe</NUnitPath>
-      <NUnitPath Condition="'$(UseNUnit3)' != 'true' And '$(PlatformTarget)' != 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console.exe</NUnitPath>
-      <NUnitPath Condition="'$(UseNUnit3)' == 'true'">$(SolutionDir)packages\NUnit.Console*\tools\nunit3-console.exe</NUnitPath>
+      <NUnitPath Condition="'$(UseNUnit2)' != 'true'">$(SolutionDir)packages\NUnit.Console*\tools\nunit3-console.exe</NUnitPath>
+      <NUnitPath Condition="'$(UseNUnit2)' == 'true' And '$(PlatformTarget)' == 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console-x86.exe</NUnitPath>
+      <NUnitPath Condition="'$(UseNUnit2)' == 'true' And '$(PlatformTarget)' != 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console.exe</NUnitPath>
     </PropertyGroup>
 
     <!--Ensure installed -->
@@ -197,8 +197,8 @@
 
       <NUnitResultFormat Condition="'$(NUnitResultFormat)' == ''">nunit2</NUnitResultFormat>
       <NUnitArgs Condition="'$(NUnitArgs)' == ''">/trace=$(TestVerbosity)</NUnitArgs>
-      <Nunit3Args Condition="'$(UseNUnit3)' == 'true'">--result:TestResult.xml;format=$(NUnitResultFormat)</Nunit3Args>
-      <Nunit2Args Condition="'$(UseNUnit3)' != 'true'">/nologo /nodots /noshadow /domain=single</Nunit2Args>
+      <Nunit3Args Condition="'$(UseNUnit2)' != 'true'">--result:TestResult.xml;format=$(NUnitResultFormat)</Nunit3Args>
+      <Nunit2Args Condition="'$(UseNUnit2)' == 'true'">/nologo /nodots /noshadow /domain=single</Nunit2Args>
       <_NunitArgs>$(NUnitArgs) $(NUnit2Args) $(Nunit3Args)</_NunitArgs>
     </PropertyGroup>
 
