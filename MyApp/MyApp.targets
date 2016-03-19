@@ -5,8 +5,6 @@
     <!-- <Build>42</Build> -->
     <CoverageFailOnTargetFail>false</CoverageFailOnTargetFail>
     <DeployFailOnBuildNotSet>false</DeployFailOnBuildNotSet>
-    <UseNUnit3>true</UseNUnit3>
-    <NUnitResultFormat>nunit3</NUnitResultFormat>
   </PropertyGroup>
 
   <PropertyGroup>
