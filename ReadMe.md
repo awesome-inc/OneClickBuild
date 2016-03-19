@@ -206,12 +206,12 @@ for applications. This presumes that you may have tests included in your product
 
 		<TestsProjectPattern >$(OutDir)$(AssemblyName).exe;$(OutDir)MyCode*.dll;$(OutDir)3rdParty*.dll</TestsProjectPattern>
 
-#### Using NUnit3
+#### Explicitly using NUnit2
 
-As of version 1.7.x OneClickBuild supports [NUnit3](https://github.com/nunit/nunit). To enable **NUnit3** update the `NUnit.Runners` package to version 3.x. Then set the
-`UseNUnit3` property to `true`, i.e.
+As of version 1.7.x OneClickBuild defaults to using the [NUnit3 console runner](https://github.com/nunit/docs/wiki/Console-Runner) which can run both NUnit3 and NUnit2 tests. If you explicitly need to specifically use NUnit2 console runner, do as follows
 
-    <UseNUnit3>true</UseNUnit3>
+- Explicitly install [NUnit.Runners](https://www.nuget.org/packages/NUnit.Runners/) in version 2.x
+- Set `<UseNUnit2>true</UseNUnit2>`
 
 Additionally, you can set the [NUnit XML output format](http://nunit.org/index.php?p=consoleCommandLine&r=3.0)
 
@@ -221,7 +221,7 @@ In order to preserve compatibility to other tools like Jenkins & Sonar, the defa
 
 When using **NUnit3** throughout all projects in your solution (recommended), a good place to set these properties is the `solution.targets`. 
 
-If you desperately need mixing NUnit 2 & 3 in your projects, then set these properties only in the project specific targets for the projects using **NUnit3**.
+If you really need mixing NUnit 2 & 3 in your projects, then set these properties only in the project specific targets for the projects using **NUnit3**.
 
 ### Getting Code Coverage (OpenCover)
 
