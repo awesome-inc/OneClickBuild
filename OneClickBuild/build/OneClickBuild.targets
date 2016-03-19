@@ -3,8 +3,14 @@
 
   <PropertyGroup>
     <NonCSharpProject Condition="'$(NonCSharpProject)' == '' And !$(MSBuildProjectFile.EndsWith('.csproj'))" >true</NonCSharpProject>
-    <!-- Disable GitVersion assembly info for non-cs projects -->
-    <UpdateAssemblyInfo Condition="'$(IsCSharpProject)' != 'true'">false</UpdateAssemblyInfo>
+    <SkipSolutionInfo Condition="'$(SkipSolutionInfo)' == '' And ('$(NonCSharpProject)' != '' Or '$(NCrunch)' !='')">true</SkipSolutionInfo>
+
+    <!-- Disable GitVersion assembly info for non-csharp projects -->
+    <UpdateAssemblyInfo Condition="'$(NonCSharpProject)' == 'true'">false</UpdateAssemblyInfo>
+
+    <!-- Disable GitVersion during NCrunch, cf.: https://github.com/GitTools/GitVersion/issues/11#issuecomment-198669861 -->
+    <UpdateAssemblyInfo Condition="'$(NCrunch)' == '1'">false</UpdateAssemblyInfo>
+    <GetVersion Condition="'$(NCrunch)' == '1'">false</GetVersion>
 
     <!-- Use AppVeyor Build-Number, cf.: http://www.appveyor.com/docs/environment-variables -->
     <Build Condition="'$(CI)' == 'True'">$(APPVEYOR_BUILD_NUMBER)</Build>
@@ -30,7 +36,7 @@
 
   <!-- ClickOnce Versioning -->
   <Target Name="SetSetClickOnceVersion"
-    Condition="'$(ApplicationVersion)'==''"
+    Condition="'$(ApplicationVersion)'=='' And '$(NCrunch)' != '1'"
     DependsOnTargets="GetVersion"
     BeforeTargets="_DeploymentComputeClickOnceManifestInfo">
     <PropertyGroup>
