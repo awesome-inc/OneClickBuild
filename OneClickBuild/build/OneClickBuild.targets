@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <IsCSharpProject Condition="$(MSBuildProjectFile.EndsWith('.csproj'))" >true</IsCSharpProject>
+    <NonCSharpProject Condition="'$(NonCSharpProject)' == '' And !$(MSBuildProjectFile.EndsWith('.csproj'))" >true</NonCSharpProject>
     <!-- Disable GitVersion assembly info for non-cs projects -->
     <UpdateAssemblyInfo Condition="'$(IsCSharpProject)' != 'true'">false</UpdateAssemblyInfo>
 
@@ -91,7 +91,7 @@
 
   <Target Name="TestWithNunit" DependsOnTargets="PrepareTests;SelectNUnitConsole;_TestWithNunit" />
 
-  <Target Name="_TestWithNunit" Condition="'@(TestAssemblies)' != ''">
+  <Target Name="_TestWithNunit" Condition="'@(TestAssemblies)' != ''"> 
     <PropertyGroup>
       <NUnitResultFormat Condition="'$(NUnitResultFormat)' == ''">nunit2</NUnitResultFormat>
       <NUnitArgs Condition="'$(NUnitArgs)' == ''">/trace=$(TestVerbosity)</NUnitArgs>
