@@ -2,9 +2,15 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <IsCSharpProject Condition="$(MSBuildProjectFile.EndsWith('.csproj'))" >true</IsCSharpProject>
-    <!-- Disable GitVersion assembly info for non-cs projects -->
-    <UpdateAssemblyInfo Condition="'$(IsCSharpProject)' != 'true'">false</UpdateAssemblyInfo>
+    <NonCSharpProject Condition="'$(NonCSharpProject)' == '' And !$(MSBuildProjectFile.EndsWith('.csproj'))" >true</NonCSharpProject>
+    <SkipSolutionInfo Condition="'$(SkipSolutionInfo)' == '' And ('$(NonCSharpProject)' != '' Or '$(NCrunch)' !='')">true</SkipSolutionInfo>
+
+    <!-- Disable GitVersion assembly info for non-csharp projects -->
+    <UpdateAssemblyInfo Condition="'$(NonCSharpProject)' == 'true'">false</UpdateAssemblyInfo>
+
+    <!-- Disable GitVersion during NCrunch, cf.: https://github.com/GitTools/GitVersion/issues/11#issuecomment-198669861 -->
+    <UpdateAssemblyInfo Condition="'$(NCrunch)' == '1'">false</UpdateAssemblyInfo>
+    <GetVersion Condition="'$(NCrunch)' == '1'">false</GetVersion>
 
     <!-- Use AppVeyor Build-Number, cf.: http://www.appveyor.com/docs/environment-variables -->
     <Build Condition="'$(CI)' == 'True'">$(APPVEYOR_BUILD_NUMBER)</Build>
@@ -29,8 +35,8 @@
   <Target Name="Deploy" DependsOnTargets="Build;Package;DeployWithNuGet;Publish"/>
 
   <!-- ClickOnce Versioning -->
-  <Target Name="SetSetClickOnceVersion"
-    Condition="'$(ApplicationVersion)'==''"
+  <Target Name="SetClickOnceVersion"
+    Condition="'$(ApplicationVersion)'=='' And '$(NCrunch)' != '1'"
     DependsOnTargets="GetVersion"
     BeforeTargets="_DeploymentComputeClickOnceManifestInfo">
     <PropertyGroup>
@@ -91,12 +97,12 @@
 
   <Target Name="TestWithNunit" DependsOnTargets="PrepareTests;SelectNUnitConsole;_TestWithNunit" />
 
-  <Target Name="_TestWithNunit" Condition="'@(TestAssemblies)' != ''">
+  <Target Name="_TestWithNunit" Condition="'@(TestAssemblies)' != ''"> 
     <PropertyGroup>
       <NUnitResultFormat Condition="'$(NUnitResultFormat)' == ''">nunit2</NUnitResultFormat>
       <NUnitArgs Condition="'$(NUnitArgs)' == ''">/trace=$(TestVerbosity)</NUnitArgs>
-      <Nunit3Args Condition="'$(UseNUnit3)' == 'true'">--result:TestResult.xml;format=$(NUnitResultFormat)</Nunit3Args>
-      <Nunit2Args Condition="'$(UseNUnit3)' != 'true'">/nologo /nodots /noshadow /domain=single</Nunit2Args>
+      <Nunit3Args Condition="'$(UseNUnit2)' != 'true'">--result:TestResult.xml;format=$(NUnitResultFormat)</Nunit3Args>
+      <Nunit2Args Condition="'$(UseNUnit2)' == 'true'">/nologo /nodots /noshadow /domain=single</Nunit2Args>
       <_NunitArgs>$(NUnitArgs) $(NUnit2Args) $(Nunit3Args)</_NunitArgs>
     </PropertyGroup>
 
@@ -108,9 +114,9 @@
 
   <Target Name="SelectNUnitConsole" Condition="'@(NUnitConsole)'==''">
     <PropertyGroup>
-      <NUnitPath Condition="'$(UseNUnit3)' != 'true' And '$(PlatformTarget)' == 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console-x86.exe</NUnitPath>
-      <NUnitPath Condition="'$(UseNUnit3)' != 'true' And '$(PlatformTarget)' != 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console.exe</NUnitPath>
-      <NUnitPath Condition="'$(UseNUnit3)' == 'true'">$(SolutionDir)packages\NUnit.Console*\tools\nunit3-console.exe</NUnitPath>
+      <NUnitPath Condition="'$(UseNUnit2)' != 'true'">$(SolutionDir)packages\NUnit.Console*\tools\nunit3-console.exe</NUnitPath>
+      <NUnitPath Condition="'$(UseNUnit2)' == 'true' And '$(PlatformTarget)' == 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console-x86.exe</NUnitPath>
+      <NUnitPath Condition="'$(UseNUnit2)' == 'true' And '$(PlatformTarget)' != 'x86'">$(SolutionDir)packages\NUnit.*\tools\nunit-console.exe</NUnitPath>
     </PropertyGroup>
 
     <!--Ensure installed -->
@@ -197,8 +203,8 @@
 
       <NUnitResultFormat Condition="'$(NUnitResultFormat)' == ''">nunit2</NUnitResultFormat>
       <NUnitArgs Condition="'$(NUnitArgs)' == ''">/trace=$(TestVerbosity)</NUnitArgs>
-      <Nunit3Args Condition="'$(UseNUnit3)' == 'true'">--result:TestResult.xml;format=$(NUnitResultFormat)</Nunit3Args>
-      <Nunit2Args Condition="'$(UseNUnit3)' != 'true'">/nologo /nodots /noshadow /domain=single</Nunit2Args>
+      <Nunit3Args Condition="'$(UseNUnit2)' != 'true'">--result:TestResult.xml;format=$(NUnitResultFormat)</Nunit3Args>
+      <Nunit2Args Condition="'$(UseNUnit2)' == 'true'">/nologo /nodots /noshadow /domain=single</Nunit2Args>
       <_NunitArgs>$(NUnitArgs) $(NUnit2Args) $(Nunit3Args)</_NunitArgs>
     </PropertyGroup>
 

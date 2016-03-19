@@ -1,5 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="foo" BeforeTargets="PrepareForBuild">
+    <Message Importance="High" Text="NonCSharpProject ? '$(NonCSharpProject)' ..." />
+    <Message Importance="High" Text="UpdateAssemblyInfo ? '$(UpdateAssemblyInfo)' ..." />
+    <Message Importance="High" Text="GetVersion ? '$(GetVersion)' ..." />
+  </Target>
+
   <Target Name="Deploy">
     <Message Text="Skipping 'Deploy' for $(ProjectName)" Importance="High" />
   </Target>

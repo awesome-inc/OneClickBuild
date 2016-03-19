@@ -206,12 +206,12 @@ for applications. This presumes that you may have tests included in your product
 
 		<TestsProjectPattern >$(OutDir)$(AssemblyName).exe;$(OutDir)MyCode*.dll;$(OutDir)3rdParty*.dll</TestsProjectPattern>
 
-#### Using NUnit3
+#### Explicitly using NUnit2
 
-As of version 1.7.x OneClickBuild supports [NUnit3](https://github.com/nunit/nunit). To enable **NUnit3** update the `NUnit.Runners` package to version 3.x. Then set the
-`UseNUnit3` property to `true`, i.e.
+As of version 1.7.x OneClickBuild defaults to using the [NUnit3 console runner](https://github.com/nunit/docs/wiki/Console-Runner) which can run both NUnit3 and NUnit2 tests. If you explicitly need to specifically use NUnit2 console runner, do as follows
 
-    <UseNUnit3>true</UseNUnit3>
+- Explicitly install [NUnit.Runners](https://www.nuget.org/packages/NUnit.Runners/) in version 2.x
+- Set `<UseNUnit2>true</UseNUnit2>`
 
 Additionally, you can set the [NUnit XML output format](http://nunit.org/index.php?p=consoleCommandLine&r=3.0)
 
@@ -221,7 +221,7 @@ In order to preserve compatibility to other tools like Jenkins & Sonar, the defa
 
 When using **NUnit3** throughout all projects in your solution (recommended), a good place to set these properties is the `solution.targets`. 
 
-If you desperately need mixing NUnit 2 & 3 in your projects, then set these properties only in the project specific targets for the projects using **NUnit3**.
+If you really need mixing NUnit 2 & 3 in your projects, then set these properties only in the project specific targets for the projects using **NUnit3**.
 
 ### Getting Code Coverage (OpenCover)
 
@@ -286,33 +286,11 @@ Overriding the default solution targets can be achieved by adding a project spec
     <!-- ## Automatically import project-specific overrides (place this last) -->
 	<Import Project="$(ProjectDir)\$(ProjectName).targets" Condition="Exists('$(ProjectDir)\$(ProjectName).targets')"/>
 
-#### Use case: Override `Deploy` for ClickOnce publishing
+#### Deploying with ClickOnce
 
-Here is an example how to override the `Deploy` target to publish a ClickOnce application (based on issue [#6](https://github.com/awesome-inc/OneClickBuild/issues/6)):
+**Note:** With [#18](https://github.com/awesome-inc/OneClickBuild/issues/18) ClickOnce is now supported out-of-the-box by the target [SetClickOnceVersion](https://github.com/awesome-inc/OneClickBuild/blob/develop/OneClickBuild/build/OneClickBuild.targets#L38). 
 
-    <Target Name="Deploy" DependsOnTargets="Publish"/>
-    <Target Name="Package" BeforeTargets="_CopyFilesToPublishFolder" DependsOnTargets="Build"/>
-
-    <!--cf: https://github.com/awesome-inc/OneClickBuild/issues/6 -->
-    <Target Name="SetClickOnceProperties"
-    Condition="'$(ApplicationVersion)'==''"
-    AfterTargets="UpdateAssemblyInfo" 
-    BeforeTargets="_DeploymentComputeClickOnceManifestInfo">
-    <CreateProperty Value="$(GitVersion_MajorMinorPatch).$(Build)">
-      <Output TaskParameter="Value" PropertyName="ApplicationVersion"/>
-    </CreateProperty>
-    
-    <Message Text="ApplicationVersion (ClickOnce) set to '$(ApplicationVersion)'" />
-  </Target>
-
-**NOTE:** Deploying Microsoft Office plugins with [VSTO](https://en.wikipedia.org/wiki/Visual_Studio_Tools_for_Office) also uses ClickOnce.  For VSTO you need to override `PublishVersion` as well, i.e. add
-
-	<!-- for VSTO -->
-	<CreateProperty Value="$(ApplicationVersion)">
-	  <Output TaskParameter="Value" PropertyName="PublishVersion"/>
-	</CreateProperty>
-
-to the target.
+This includes standard Windows applications as well as Microsoft Office Plugins based on [VSTO](https://en.wikipedia.org/wiki/Visual_Studio_Tools_for_Office).
 
 ### Continuous Integration (Jenkins)
 
@@ -380,19 +358,18 @@ Here is a simplified version of the `Package.nuspec` that is used by `OneClickBu
 		<id>OneClickBuild</id>
 		<version>$Version$</version>
 		<title>OneClickBuild</title>
-		<authors>mkoertgen,tmentzel</authors>
-		<owners>mkoertgen,tmentzel</owners>
+	    <authors>Awesome Incremented and Contributors</authors>
+	    <owners>Awesome Incremented and Contributors</owners>
+	    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>Simplify your build, run tests and coverage.</description>
 		<summary>...</summary>
-		<copyright/>
-		<releaseNotes>Revision: $Revision$</releaseNotes>
-		<projectUrl>https://github.com/mkoertgen/OneClickBuild</projectUrl>
+	    <copyright>Copyright © 2016 All Rights Reserved.</copyright>
+	    <developmentDependency>true</developmentDependency>
+	    <releaseNotes>Revision: $Revision$</releaseNotes>
+	    <projectUrl>https://github.com/awesome-inc/OneClickBuild</projectUrl>
 		<dependencies>
-	      <dependency id="GitVersionTask" version="3.1.1" />
-	      <dependency id="NUnit.Runners" version="2.6.4" />
-	      <dependency id="OpenCover" version="4.6.166" />
-	      <dependency id="ReportGenerator" version="2.2.0" />
+	      <dependency id="GitVersionTask" version="3.4.1" />
 		</dependencies>    
 		<references></references>
 		<tags>continuous integration</tags>
