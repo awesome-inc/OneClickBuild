@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <NonCSharpProject Condition="'$(NonCSharpProject)' == '' And !$(MSBuildProjectFile.EndsWith('.csproj'))" >true</NonCSharpProject>
+    <NonCSharpProject Condition="'$(Language)' != 'C#'" >true</NonCSharpProject>
     <SkipSolutionInfo Condition="'$(SkipSolutionInfo)' == '' And ('$(NonCSharpProject)' != '' Or '$(NCrunch)' !='')">true</SkipSolutionInfo>
 
     <!-- Disable GitVersion assembly info for non-csharp projects -->
