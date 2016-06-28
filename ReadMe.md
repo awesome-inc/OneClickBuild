@@ -71,7 +71,7 @@ Finally, do a test build. In your solution folder type
 and you should get a clean **Release** build with version and git commit info attached
 to your output assemblies (see *File -> Properties -> Details*).
 
-Optionally you might find it helpful to wrap up on using [GitVersion](http://gitversion.readthedocs.org/en/latest/usage/#command-line)
+Optionally you might find it helpful to wrap up on using [GitVersion](http://gitversion.readthedocs.io/en/latest/usage/command-line/)
 
 That's it. Enjoy!
 
@@ -118,7 +118,7 @@ using [GitVersion](https://github.com/GitTools/GitVersion).
 When using git workflows like [GitFlow](http://nvie.com/posts/a-successful-git-branching-model/) or [GitHubFlow](http://scottchacon.com/2011/08/31/github-flow.html) then versioning is automated and you will almost never need to set a version anywhere in your project files.
 
 However, if you really need to, you can set the semantic version of your project explicitly in `GitVersionConfig.yaml`.
-See [GitVersion Usage](http://gitversion.readthedocs.org/en/latest/usage/) for more details.
+See [GitVersion Usage](http://gitversion.readthedocs.io/en/latest/usage/usage/) for more details.
 
 #### ClickOnce versioning
 
