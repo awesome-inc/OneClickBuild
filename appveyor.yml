@@ -3,6 +3,8 @@
   branches:
     only:
       - master
+      - /hotfix/
+      - /release/
   install:
     - choco install gitversion.portable -pre -y
   test: off
@@ -18,11 +20,10 @@
     - nuget setapikey %apiKey% -Verbosity quiet
   build_script:
     - build.bat /t:CoverageUpload;Deploy /v:m
-#  after_build:
-#    - ps: >-
-#      $wc = New-Object 'System.Net.WebClient'
-#    
-#      $wc.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\testresults\OneClickBuild.Tests.xml))
+  cache:
+    - packages -> **\packages.config
+    - C:\ProgramData\chocolatey\bin -> appveyor.yml
+    - C:\ProgramData\chocolatey\lib -> appveyor.yml
 
 # all other branches
 -
@@ -37,8 +38,8 @@
     - ps: gitversion /l console /output buildserver
   build_script:
     - build.bat /t:CoverageUpload;Package /v:m
- # after_build:
- # - ps: >-
- #     $wc = New-Object 'System.Net.WebClient'
- #   
- #     $wc.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\testresults\OneClickBuild.Tests.xml))
+  cache:
+    - packages -> **\packages.config
+    - C:\ProgramData\chocolatey\bin -> appveyor.yml
+    - C:\ProgramData\chocolatey\lib -> appveyor.yml
+

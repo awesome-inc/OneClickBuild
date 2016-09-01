@@ -22,6 +22,8 @@
 
     <NuspecFile Condition="'$(NuspecFile)'==''">$(ProjectDir)Package.nuspec</NuspecFile>
     <NuGetSourceToDeploy Condition="'$(NuGetSourceToDeploy)'==''">https://www.nuget.org</NuGetSourceToDeploy>
+    
+    <ContinueOnError Condition="'$(ContinueOnError)' == ''">false</ContinueOnError>
 
   </PropertyGroup>
 
@@ -62,7 +64,7 @@
 
     <Message Importance="Normal" Condition="!Exists($(NuspecFile))" Text="Skipping target because .nuspec-file is missing (expected '$(NuspecFile)')" />
     <Exec Condition="Exists($(NuspecFile))"
-          ContinueOnError="ErrorAndContinue"
+          ContinueOnError="$(ContinueOnError)"
           Command="nuget pack $(NuspecFile) -Properties Version=$(PackageVersion);Revision=$(Revision);Configuration=$(Configuration)"/>
   </Target>
 
@@ -81,7 +83,7 @@
     <!-- To set API key use "NuGet.exe setApiKey <key> -Source <source>" -->
     <Message Condition="'$(PackageFile)'!='' And Exists($(PackageFile))" Text="Pushing package $(PackageFile) to $(NuGetSourceToDeploy)..." Importance="High"  />
     <Exec Condition="'$(PackageFile)'!='' And Exists($(PackageFile))"
-          ContinueOnError="ErrorAndContinue"
+          ContinueOnError="$(ContinueOnError)"
           Command="nuget push $(PackageFile) -Source $(NuGetSourceToDeploy) > NUL" />
   </Target>
 
@@ -107,7 +109,7 @@
     </PropertyGroup>
 
     <Exec WorkingDirectory="$(OutDir)"
-          ContinueOnError="ErrorAndContinue"
+          ContinueOnError="$(ContinueOnError)"
           Command="&quot;@(NUnitConsole->'%(FullPath)')&quot; $(_NunitArgs) @(TestAssemblies, ' ')" />
     <Move SourceFiles="$(OutDir)TestResult.xml" DestinationFiles="$(TestResults)"/>
   </Target>
@@ -124,7 +126,7 @@
       <AnyNUnitConsole Include="$(NUnitPath)"/>
     </ItemGroup>
     <Exec Condition="'@(AnyNUnitConsole)'==''"
-          ContinueOnError="ErrorAndContinue" Command="nuget install NUnit.Console -o $(SolutionDir)packages" />
+          ContinueOnError="$(ContinueOnError)" Command="nuget install NUnit.Console -o $(SolutionDir)packages" />
 
     <!-- Select most recent NUnit console -->
     <ItemGroup>
@@ -145,7 +147,7 @@
     </PropertyGroup>
 
     <Exec WorkingDirectory="$(OutDir)"
-          ContinueOnError="ErrorAndContinue"
+          ContinueOnError="$(ContinueOnError)"
           Command="&quot;@(XUnitConsole->'%(FullPath)')&quot; @(TestAssemblies, ' ') $(XunitArgs)" />
     <Move SourceFiles="$(OutDir)TestResult.xml" DestinationFiles="$(TestResults)"/>
   </Target>
@@ -161,7 +163,7 @@
       <AnyXUnitConsole Include="$(XUnitPath)"/>
     </ItemGroup>
     <Exec Condition="'@(AnyXUnitConsole)'==''"
-          ContinueOnError="ErrorAndContinue" Command="nuget install xunit.runner.console -o $(SolutionDir)packages" />
+          ContinueOnError="$(ContinueOnError)" Command="nuget install xunit.runner.console -o $(SolutionDir)packages" />
 
     <!-- Select most recent -->
     <ItemGroup>
@@ -210,7 +212,7 @@
 
     <Exec WorkingDirectory="$(OutDir)"
           IgnoreStandardErrorWarningFormat="true"
-          ContinueOnError="ErrorAndContinue"
+          ContinueOnError="$(ContinueOnError)"
           Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(NUnitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;$(_NunitArgs) @(TestAssemblies, ' ')&quot;" />
     <Move SourceFiles="$(OutDir)TestResult.xml" DestinationFiles="$(TestResults)"/>
   </Target>
@@ -231,7 +233,7 @@
 
     <Exec WorkingDirectory="$(OutDir)"
           IgnoreStandardErrorWarningFormat="true"
-          ContinueOnError="ErrorAndContinue"
+          ContinueOnError="$(ContinueOnError)"
           Command="&quot;@(OpenCoverConsole->'%(FullPath)')&quot; $(OpenCoverArgs) -target:&quot;@(XUnitConsole->'%(FullPath)')&quot; -targetdir:. -targetargs:&quot;@(TestAssemblies, ' ') $(XunitArgs)&quot;" />
     <Move SourceFiles="$(OutDir)TestResult.xml" DestinationFiles="$(TestResults)"/>
   </Target>
@@ -247,7 +249,7 @@
       <AnyOpenCover Include="$(_OpenCoverPath)"/>
     </ItemGroup>
     <Exec Condition="'@(AnyOpenCover)'==''"
-          ContinueOnError="ErrorAndContinue" Command="nuget install OpenCover -o $(SolutionDir)packages" />
+          ContinueOnError="$(ContinueOnError)" Command="nuget install OpenCover -o $(SolutionDir)packages" />
 
     <!-- Select most recent -->
     <ItemGroup>
@@ -267,7 +269,7 @@
     <Message Condition="'@(TestAssemblies)' == ''"
          Text="Skipping target since no test assemblies to report coverage on" />
     <Exec Condition="'@(TestAssemblies)' != ''"
-          ContinueOnError="ErrorAndContinue"
+          ContinueOnError="$(ContinueOnError)"
           Command="&quot;@(ReportGenerator->'%(FullPath)')&quot; $(ReportGeneratorArgs)"
           WorkingDirectory="$(OutDir)" />
   </Target>
@@ -282,7 +284,7 @@
       <AnyReportGenerator Include="$(_ReportGeneratorPath)"/>
     </ItemGroup>
     <Exec Condition="'@(AnyReportGenerator)'==''"
-          ContinueOnError="ErrorAndContinue" Command="nuget install ReportGenerator -o $(SolutionDir)packages" />
+          ContinueOnError="$(ContinueOnError)" Command="nuget install ReportGenerator -o $(SolutionDir)packages" />
 
     <!-- Select most recent -->
     <ItemGroup>
@@ -303,7 +305,7 @@
     </PropertyGroup>
 
     <Exec Command="&quot;@(CoverAllsUploader->'%(FullPath)')&quot; $(CoverallsUploaderOptions)"
-          ContinueOnError="ErrorAndContinue"
+          ContinueOnError="$(ContinueOnError)"
           WorkingDirectory="$(TestResultsDir)" />
 
   </Target>
@@ -318,7 +320,7 @@
       <AnyCoverAlls Include="$(_CoverAllsPath)"/>
     </ItemGroup>
     <Exec Condition="'@(AnyCoverAlls)'==''"
-          ContinueOnError="ErrorAndContinue" Command="nuget install coveralls.io -o $(SolutionDir)packages" />
+          ContinueOnError="$(ContinueOnError)" Command="nuget install coveralls.io -o $(SolutionDir)packages" />
 
     <!-- Select most recent -->
     <ItemGroup>
