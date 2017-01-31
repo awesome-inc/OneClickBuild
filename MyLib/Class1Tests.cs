@@ -40,7 +40,7 @@ namespace MyLib
         #region NUnit .NET framework selection tests 
 
         [Test(Description = "Test NUnit test framework selection by using async/await")]
-        public async Task AnAsyncPassingTest()
+        public async Task PassingTestAsync()
         {
             var sut = new Class1();
             var actual = await sut.SomeTask();
