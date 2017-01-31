@@ -37,7 +37,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>DD7F3A48DCAB1E77AA4510E6DE13E53B211C9CB9</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>2008566D8D2C43E583153894758B13AA21DA4743</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>MyApp_TemporaryKey.pfx</ManifestKeyFile>
