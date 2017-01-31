@@ -292,7 +292,9 @@ Overriding the default solution targets can be achieved by adding a project spec
 
 This includes standard Windows applications as well as Microsoft Office Plugins based on [VSTO](https://en.wikipedia.org/wiki/Visual_Studio_Tools_for_Office).
 
-### Continuous Integration (Jenkins)
+### Continuous Integration
+
+#### Jenkins
 
 In Jenkins just use the *Execute Windows Batch command* and use a command line like
 
@@ -315,6 +317,19 @@ and add the Post-Build step *Publish HTML reports* with
 Note that you need to generate a HTML report from the OpenCover results using
 
 	build [project] /t:CoverageReport
+
+#### GitLab CI
+
+Here is an example `.gitlab-ci.yml`
+
+	stages:
+	  - build
+	
+	job:
+	  stage: build
+	  script: build.bat /v:m    
+
+For more information see the [GitLab CI Documentation](https://docs.gitlab.com/ce/ci/yaml/).
 
 ### NuGet Deployment
 
@@ -339,9 +354,9 @@ To control the NuGet server the package is pushed to, override the property
 
 #### <a name="ci-deploy"></a>Deploying locally vs. CI server
 
-In general, local deployment from a developer's working directory is discouraged to avoid human errors during release. Instead, it is usually better to always let a CI server deploy a release, e.g. [Jenkins](https://jenkins-ci.org/), [AppVeyor](http://www.appveyor.com/), [TeamCity](https://www.jetbrains.com/teamcity/), etc.
+In general, local deployment from a developer's working directory is discouraged to avoid human errors during release. Instead, it is usually better to always let a CI server deploy a release, e.g. [Jenkins](https://jenkins-ci.org/), [AppVeyor](http://www.appveyor.com/), [TeamCity](https://www.jetbrains.com/teamcity/), [Gitlab CI](https://about.gitlab.com/gitlab-ci/) etc.
 
-OneClickBuild detects the presence of a CI build by checking for environment variables like `BUILD_NUMBER` and falls back to `$(Build) = 0` if no CI server is detected. In this case the default is to let the `Deploy` target fail.
+OneClickBuild detects the presence of a CI build by checking for environment variables like `BUILD_NUMBER` (for Jenkins) and falls back to `$(Build) = 0` if no CI server is detected. In this case the default is to let the `Deploy` target fail.
 
 Although not recommended you can override this by setting
 
