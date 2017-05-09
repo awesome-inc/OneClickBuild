@@ -362,8 +362,8 @@
 
   <!-- Helper task to select newest tool file in case there are mixed packages installed -->
   <PropertyGroup>
-    <CodeTaskFactoryDll Condition="'$(MSBuildToolsVersion)' != '14'">$(MSBuildToolsPath)\Microsoft.Build.Tasks.v$(MSBuildToolsVersion).dll</CodeTaskFactoryDll>
-    <CodeTaskFactoryDll Condition="'$(MSBuildToolsVersion)' == '14'">$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll</CodeTaskFactoryDll>
+    <CodeTaskFactoryDll Condition="$(MSBuildToolsVersion) &lt; 14">$(MSBuildToolsPath)\Microsoft.Build.Tasks.v$(MSBuildToolsVersion).dll</CodeTaskFactoryDll>
+    <CodeTaskFactoryDll Condition="$(MSBuildToolsVersion) &gt;= 14">$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll</CodeTaskFactoryDll>
   </PropertyGroup>
   <UsingTask TaskName="GetLatest" TaskFactory="CodeTaskFactory" AssemblyFile="$(CodeTaskFactoryDll)">
     <ParameterGroup>
