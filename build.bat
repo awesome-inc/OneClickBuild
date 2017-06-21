@@ -16,6 +16,7 @@ set msbuild=C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\MSB
 if exist "%msbuild%" goto checkNuget
 set msbuild=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe
 if exist "%msbuild%" goto checkNuget
+
 rem VS2015, 2013, cf.: http://blogs.msdn.com/b/visualstudio/archive/2013/07/24/msbuild-is-now-part-of-visual-studio.aspx
 set msbuild=c:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe
 if exist "%msbuild%" goto checkNuget
