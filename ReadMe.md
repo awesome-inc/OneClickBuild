@@ -472,6 +472,11 @@ Here is a simplified version of the `Package.nuspec` that is used by `OneClickBu
 
 ### Continuous Inspection (SonarQube)
 
+TODO: SonarQube C# support changed to an explicit msbuild scanner, cf.:
+
+- [Analyzing with SonarQube Scanner for MSBuild](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSBuild)
+
+**Outdated:**
 NUnit test results as well as OpenCover coverage reports can be directly reused in [SonarQube](http://www.sonarqube.org/).
 Here is a snippet from a sample *sonar-project.properties*:
 
