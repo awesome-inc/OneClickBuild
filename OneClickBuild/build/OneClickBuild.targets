@@ -309,7 +309,7 @@
     <Exec Command="&quot;@(CoverAllsUploader->'%(FullPath)')&quot; $(CoverallsUploaderOptions)"
           ContinueOnError="$(ContinueOnError)"
           WorkingDirectory="$(TestResultsDir)"
-          Condition="Exists($(CoverageReportDir))"/>
+          Condition="Exists($(OpenCoverOutput))"/>
 
   </Target>
 
