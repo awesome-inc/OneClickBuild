@@ -1,4 +1,2 @@
 mode: ContinuousDelivery
-branches:
-  features?[/-]:
-    tag: alpha.{BranchName}
+branches: {}
