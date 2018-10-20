@@ -2,7 +2,6 @@
 
 The **OneClickBuild** package includes a simple `build.bat` and *MSBuild targets* bringing you closer to the famous *1-Click-Build*.
 
-[![Join the chat at https://gitter.im/awesome-inc/OneClickBuild](https://badges.gitter.im/awesome-inc/OneClickBuild.svg)](https://gitter.im/awesome-inc/OneClickBuild?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build status](https://ci.appveyor.com/api/projects/status/qs1cu14tjvh1j0le?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/oneclickbuild)
 [![NuGet](https://img.shields.io/nuget/v/OneClickBuild.svg?style=flat-square)](https://www.nuget.org/packages/OneClickBuild/)
 [![NuGet](https://img.shields.io/nuget/dt/oneclickbuild.svg?style=flat-square)](https://www.nuget.org/packages/OneClickBuild/)
 [![Issue Stats](http://issuestats.com/github/awesome-inc/OneClickBuild/badge/pr)](http://issuestats.com/github/awesome-inc/OneClickBuild)
