@@ -3,7 +3,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/qs1cu14tjvh1j0le?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/oneclickbuild)
 [![NuGet](https://img.shields.io/nuget/v/OneClickBuild.svg?style=flat-square)](https://www.nuget.org/packages/OneClickBuild/)
 [![NuGet](https://img.shields.io/nuget/dt/oneclickbuild.svg?style=flat-square)](https://www.nuget.org/packages/OneClickBuild/)
-[![Coverage Status](https://coveralls.io/repos/awesome-inc/OneClickBuild/badge.svg?branch=develop&service=github)](https://coveralls.io/github/awesome-inc/OneClickBuild)
+[![Coverage Status](https://coveralls.io/repos/github/awesome-inc/OneClickBuild/badge.svg?branch=master)](https://coveralls.io/github/awesome-inc/OneClickBuild?branch=master)
 
 The **OneClickBuild** package includes a simple `build.bat` and *MSBuild targets* bringing you closer to the famous *1-Click-Build*.
 
