@@ -24,7 +24,7 @@
 
     <NuspecFile Condition="'$(NuspecFile)'==''">$(ProjectDir)Package.nuspec</NuspecFile>
     <NuGetSourceToDeploy Condition="'$(NuGetSourceToDeploy)'==''">https://www.nuget.org</NuGetSourceToDeploy>
-    
+
     <ContinueOnError Condition="'$(ContinueOnError)' == ''">false</ContinueOnError>
 
   </PropertyGroup>
@@ -101,7 +101,7 @@
 
   <Target Name="TestWithNunit" DependsOnTargets="PrepareTests;SelectNUnitConsole;_TestWithNunit" />
 
-  <Target Name="_TestWithNunit" Condition="'@(TestAssemblies)' != ''"> 
+  <Target Name="_TestWithNunit" Condition="'@(TestAssemblies)' != ''">
     <PropertyGroup>
       <NUnitResultFormat Condition="'$(NUnitResultFormat)' == ''">nunit2</NUnitResultFormat>
       <NUnitArgs Condition="'$(NUnitArgs)' == ''">/trace=$(TestVerbosity)</NUnitArgs>
@@ -156,8 +156,8 @@
 
   <Target Name="SelectXUnitConsole" Condition="'@(XUnitConsole)'==''">
     <PropertyGroup>
-      <XUnitPath Condition="'$(PlatformTarget)' == 'x86'">$(SolutionDir)packages\xunit.runner.console.*\tools\xunit.console.x86.exe</XUnitPath>
-      <XUnitPath Condition="'$(PlatformTarget)' != 'x86'">$(SolutionDir)packages\xunit.runner.console.*\tools\xunit.console.exe</XUnitPath>
+      <XUnitPath Condition="'$(PlatformTarget)' == 'x86'">$(SolutionDir)packages\xunit.runner.console.*\tools\**\xunit.console.x86.exe</XUnitPath>
+      <XUnitPath Condition="'$(PlatformTarget)' != 'x86'">$(SolutionDir)packages\xunit.runner.console.*\tools\**\xunit.console.exe</XUnitPath>
     </PropertyGroup>
 
     <!--Ensure installed -->
