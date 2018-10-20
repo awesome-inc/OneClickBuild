@@ -1,27 +1,24 @@
-
 # OneClickBuild
 
 The **OneClickBuild** package includes a simple `build.bat` and *MSBuild targets* bringing you closer to the famous *1-Click-Build*.
 
 [![Join the chat at https://gitter.im/awesome-inc/OneClickBuild](https://badges.gitter.im/awesome-inc/OneClickBuild.svg)](https://gitter.im/awesome-inc/OneClickBuild?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build status](https://ci.appveyor.com/api/projects/status/qs1cu14tjvh1j0le?svg=true)](https://ci.appveyor.com/project/awesome-inc-build/oneclickbuild)
-
-[![NuGet](https://img.shields.io/nuget/v/OneClickBuild.svg?style=flat-square)](https://www.nuget.org/packages/OneClickBuild/) 
-[![NuGet](https://img.shields.io/nuget/dt/oneclickbuild.svg?style=flat-square)](https://www.nuget.org/packages/OneClickBuild/) 
-
+[![NuGet](https://img.shields.io/nuget/v/OneClickBuild.svg?style=flat-square)](https://www.nuget.org/packages/OneClickBuild/)
+[![NuGet](https://img.shields.io/nuget/dt/oneclickbuild.svg?style=flat-square)](https://www.nuget.org/packages/OneClickBuild/)
 [![Issue Stats](http://issuestats.com/github/awesome-inc/OneClickBuild/badge/pr)](http://issuestats.com/github/awesome-inc/OneClickBuild)
 [![Coverage Status](https://coveralls.io/repos/awesome-inc/OneClickBuild/badge.svg?branch=develop&service=github)](https://coveralls.io/github/awesome-inc/OneClickBuild)
 
-The `build.bat` shortcuts to **MSBuild** including targets for 
+The `build.bat` shortcuts to **MSBuild** including targets for
 
 - [versioning](#versioning) ([GitVersion](https://github.com/GitTools/GitVersion))
-- [running tests](#running-tests) ([NUnit](https://github.com/nunit), [XUnit](https://xunit.github.io/)), 
+- [running tests](#running-tests) ([NUnit](https://github.com/nunit), [XUnit](https://xunit.github.io/)),
 - [test coverage](#getting-code-coverage-opencover) ([OpenCover](https://github.com/opencover/opencover)),
 - [coverage reporting](#coverage-report) ([ReportGenerator]()),
 - [uploading coverage](#coverage-upload) ([coveralls.io](https://coveralls.io/)) and
 - [NuGet deployment](#nuget-deployment) to [NuGet](https://www.nuget.org/).
 
 The package aims to reduce dependencies on preinstalled external tools by getting the runners directly from NuGet. The only thing you need is
-	
+
 1. .NET for MSBuild (preinstalled since Windows 7) and
 2. `NuGet.exe` (in your path)
 
@@ -35,17 +32,23 @@ This makes it also perfectly suitable for continuous integration since your buil
 The **OneClickBuild** package is available as NuGet package `OneClickBuild`.
 To install **OneClickBuild**, run the following command in the Package Manager Console
 
-	PM> Install-Package OneClickBuild
+```powershell
+PM> Install-Package OneClickBuild
+```
 
 Steps after 1st time installation:
 
-1.  Copy `OneClickBuild\tools` files to your solution root folder. 
+1. Copy `OneClickBuild\tools` files to your solution root folder.
 
-    copy .\packages\OneClickBuild.[version]\tools\*.*
+```bash
+copy .\packages\OneClickBuild.[version]\tools\*.*
+```
 
 2. Rename `before.sln.targets` to `before.[solutionfilename].sln.targets`.
 
-    ren before.sln.targets before.[solutionname].sln.targets
+```bash
+ren before.sln.targets before.[solutionname].sln.targets
+```
 
 3. Add files as solution items to so you're aware of the files in Visual Studio as well.
 
@@ -53,20 +56,24 @@ Steps after 1st time installation:
 
 5. Remove duplicate assembly attributes in your `Properties\AssemblyInfo.cs`, i.e.
 
-		[assembly: AssemblyDescription("")]
-		[assembly: AssemblyConfiguration("")]
-		[assembly: AssemblyCompany("")]
-		[assembly: AssemblyProduct("...")]
-		[assembly: AssemblyCopyright("Copyright ©  2016")]
-		[assembly: AssemblyTrademark("")]
-		[assembly: AssemblyCulture("")]
-		[assembly: ComVisible(false)]
-		[assembly: AssemblyVersion("1.0.0.0")]
-		[assembly: AssemblyFileVersion("1.0.0.0")]
+```csharp
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("...")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+[assembly: ComVisible(false)]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
+```
 
 Finally, do a test build. In your solution folder type
 
-	build
+```bash
+build
+```
 
 and you should get a clean **Release** build with version and git commit info attached
 to your output assemblies (see *File -> Properties -> Details*).
@@ -75,7 +82,7 @@ Optionally you might find it helpful to wrap up on using [GitVersion](http://git
 
 That's it. Enjoy!
 
-If you have any issues or feature requests with **OneClickBuild** please raise them 
+If you have any issues or feature requests with **OneClickBuild** please raise them
 with the project owners on [GitHub](https://github.com/awesome-inc/OneClickBuild).
 
 ## Additional targets
@@ -88,32 +95,38 @@ OneClickBuild brings the following additional build targets
 - [**CoverageUpload**](#coverage-upload): Uploads code coverage statistics. Default: [coveralls.io](https://coveralls.io/)
 - **Package**: Packages the project, Default: [nuget pack](http://docs.nuget.org/docs/creating-packages/creating-and-publishing-a-package#Creating_a_Package)
 - **Deploy**: Deploys the project package, Default: [nuget push](http://docs.nuget.org/docs/creating-packages/creating-and-publishing-a-package)
- 
+
 ## Usage Examples
 
 ### Building your project
 
 The Usage for `build.bat` is
 
-	build <msbuild command line>
+```bash
+build <msbuild command line>
+```
 
-where the [MSBuild Command-Line](http://msdn.microsoft.com/en-us/library/ms164311.aspx) defaults to 
+where the [MSBuild Command-Line](http://msdn.microsoft.com/en-us/library/ms164311.aspx) defaults to
 
 1. build the single solution file present in the current directory
 2. with target `Build`. The default `Configuration` is `Release`.
 
 So to build your solution, open a command prompt in your solution directory and just type
 
-	build
+```
+build
+```
 
 To clean and build a specific project type
 
-	build Project\Project.csproj /t:Clean;Build
+```
+build Project\Project.csproj /t:Clean;Build
+```
 
 ### Versioning
 
 Version information is calculated during the build according to  [Semantic Versioning](http://semver.org/)
-using [GitVersion](https://github.com/GitTools/GitVersion). 
+using [GitVersion](https://github.com/GitTools/GitVersion).
 
 When using git workflows like [GitFlow](http://nvie.com/posts/a-successful-git-branching-model/) or [GitHubFlow](http://scottchacon.com/2011/08/31/github-flow.html) then versioning is automated and you will almost never need to set a version anywhere in your project files.
 
@@ -124,8 +137,10 @@ See [GitVersion Usage](http://gitversion.readthedocs.io/en/latest/usage/usage/) 
 
 With OneClickBuild 1.9.x automatic ClickOnce versioning is supported out of the box. To make this work just avoid setting the publishing version explicitly, i.e. remove the following properties from your `.csproj`
 
-    <ApplicationVersion>...</ApplicationVersion>
-    <ApplicationRevision>...</ApplicationRevision>
+```xml
+<ApplicationVersion>...</ApplicationVersion>
+<ApplicationRevision>...</ApplicationRevision>
+```
 
 Note that Visual Studio will add these properties back anytime you open the [Publish Wizard](https://msdn.microsoft.com/en-us/library/31kztyey.aspx) or the [Publish page](https://msdn.microsoft.com/en-us/library/ff699224.aspx)
 
@@ -135,8 +150,10 @@ Most solution wide settings for all assemblies are stored in `SolutionInfo.cs` e
 
 After installing `OneClickBuild` you need to strip down your original `Properties\AssemblyInfo.cs` down to the following two default attributes:
 
-	[assembly: AssemblyTitle("MyLib")]
-	[assembly: Guid("22669957-af00-4154-9ec9-633664d5d29b")]
+```csharp
+[assembly: AssemblyTitle("MyLib")]
+[assembly: Guid("22669957-af00-4154-9ec9-633664d5d29b")]
+```
 
 After this, all of your project assemblies contain the same meta information and version number.
 
@@ -144,67 +161,84 @@ After this, all of your project assemblies contain the same meta information and
 
 By default the target `Test` executes the **NUnit** console runner.
 
+```xml
     <!-- ## Using NUnit (default) ## -->
     <Target Name="Test" DependsOnTargets="Build;TestWithNUnit"/>
     <Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithNUnit"/>
+```
 
 For **XUnit** (since OneClickBuild 1.10) override targets `Test` & `Coverage` like
 
-    <!-- ## Using XUnit (default) ## -->
-    <Target Name="Test" DependsOnTargets="Build;TestWithXUnit"/>
-    <Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithXUnit"/>
+```xml
+<!-- ## Using XUnit (default) ## -->
+<Target Name="Test" DependsOnTargets="Build;TestWithXUnit"/>
+<Target Name="Coverage" DependsOnTargets="Build;OpenCoverWithXUnit"/>
+```
 
 To run tests from the command line use
 
-	build MyLib.Tests\MyLib.Tests.csproj /t:Test
+```bash
+build MyLib.Tests\MyLib.Tests.csproj /t:Test
+```
 
 **Note:** When tests fail the build will fail. As the execution of tests should support build verification this is considered good build practice.
 
-The output location for the test results can be set by the properties 
+The output location for the test results can be set by the properties
 `TestResultsDir` and `TestResults`. They default to
 
-	<PropertyGroup>
-		<TestResultsDir>$(SolutionDir)testresults\</TestResultsDir>
-		<TestResults>$(TestResultsDir)$(ProjectName).Tests.xml</TestResults>
-	</PropertyGroup>
+```xml
+<PropertyGroup>
+  <TestResultsDir>$(SolutionDir)testresults\</TestResultsDir>
+  <TestResults>$(TestResultsDir)$(ProjectName).Tests.xml</TestResults>
+</PropertyGroup>
+```
 
-You can explicitly define the test assemblies to run by 
+You can explicitly define the test assemblies to run by
 including `TestAssemblies`-items in your project like this
 
-	<ItemGroup>
-		<!-- run tests on "MyLib.Tests.dll" -->
-	  <TestAssemblies Include="MyLib.Tests.dll"/>
-	</ItemGroup>
+```xml
+<ItemGroup>
+  <!-- run tests on "MyLib.Tests.dll" -->
+  <TestAssemblies Include="MyLib.Tests.dll"/>
+</ItemGroup>
+```
 
 This will run all tests found in assembly  `MyLib.Tests.dll`.
-Alternatively, you can use the `TestsProjectPattern`-property to specify a 
+Alternatively, you can use the `TestsProjectPattern`-property to specify a
 wildcard pattern like this
 
-	<PropertyGroup>
-		<!-- run tests on all assemblies in the output 
-			 directory matching "*.Tests.dll" -->
-		<TestsProjectPattern>*.Tests.dll</TestsProjectPattern>
-	</PropertyGroup>
+```xml
+<PropertyGroup>
+  <!-- run tests on all assemblies in the output
+            directory matching "*.Tests.dll" -->
+  <TestsProjectPattern>$(OutDir)*.Tests.dll</TestsProjectPattern>
+</PropertyGroup>
+```
 
 Typically you will go with the default which follows the convention
 
-	<TestsProjectPattern >$(OutDir)$(AssemblyName).dll</TestsProjectPattern>
+```xml
+<TestsProjectPattern >$(OutDir)$(AssemblyName).dll</TestsProjectPattern>
+```
 
 for libraries and
 
-	<TestsProjectPattern >$(OutDir)$(AssemblyName).exe</TestsProjectPattern>
+```xml
+<TestsProjectPattern >$(OutDir)$(AssemblyName).exe</TestsProjectPattern>
+```
 
 for applications. This presumes that you may have tests included in your production code as well as your main application code. It won't harm if you don't, however.
-
 
 **Notes:**
 
 - The `Test`-target will look up the `PlatformTarget`-property to use the correct runner, i.e.
-`nunit-console.exe` for `x64/AnyCPU` or `nunit-console-x86.exe` for `x86` (likewise for **XUnit**). 
+`nunit-console.exe` for `x64/AnyCPU` or `nunit-console-x86.exe` for `x86` (likewise for **XUnit**).
 
 - Multiple patterns can be specified with the `TestsProjectPattern`-property, e.g.
 
-		<TestsProjectPattern >$(OutDir)$(AssemblyName).exe;$(OutDir)MyCode*.dll;$(OutDir)3rdParty*.dll</TestsProjectPattern>
+```xml
+<TestsProjectPattern >$(OutDir)$(AssemblyName).exe;$(OutDir)MyCode*.dll;$(OutDir)3rdParty*.dll</TestsProjectPattern>
+```
 
 #### Explicitly using NUnit2
 
@@ -215,11 +249,13 @@ As of version 1.7.x OneClickBuild defaults to using the [NUnit3 console runner](
 
 Additionally, you can set the [NUnit XML output format](http://nunit.org/index.php?p=consoleCommandLine&r=3.0)
 
-    <NUnitResultFormat>nunit3</NUnitResultFormat>
+```xml
+<NUnitResultFormat>nunit3</NUnitResultFormat>
+```
 
-In order to preserve compatibility to other tools like Jenkins & Sonar, the default is to use the legacy **NUnit2** format (`nunit2`). 
+In order to preserve compatibility to other tools like Jenkins & Sonar, the default is to use the legacy **NUnit2** format (`nunit2`).
 
-When using **NUnit3** throughout all projects in your solution (recommended), a good place to set these properties is the `solution.targets`. 
+When using **NUnit3** throughout all projects in your solution (recommended), a good place to set these properties is the `solution.targets`.
 
 If you really need mixing NUnit 2 & 3 in your projects, then set these properties only in the project specific targets for the projects using **NUnit3**.
 
@@ -229,16 +265,22 @@ The target `Coverage` executes [OpenCover](https://github.com/OpenCover/opencove
 
 Run from the command line with
 
-	build MyLib.Tests\MyLib.Tests.csproj /t:Coverage
+```bash
+build MyLib.Tests\MyLib.Tests.csproj /t:Coverage
+```
 
-The output location for the coverage results can be set by the `OpenCoverOutput`-property 
+The output location for the coverage results can be set by the `OpenCoverOutput`-property
 which defaults to
 
-	<OpenCoverOutput>$(TestResultsDir)$(ProjectName).Coverage.xml</OpenCoverOutput>
+```xml
+<OpenCoverOutput>$(TestResultsDir)$(ProjectName).Coverage.xml</OpenCoverOutput>
+```
 
 The default filter for **OpenCover** is
 
-	<OpenCoverFilter>+[$(AssemblyName)]* -[*]*Tests -[FluentAssertions]*</OpenCoverFilter>
+```xml
+<OpenCoverFilter>+[$(AssemblyName)]* -[*]*Tests -[FluentAssertions]*</OpenCoverFilter>
+```
 
 which includes all code from the current assembly and excludes all classes ending with `Tests` and everything from the `FluentAssertions`-assembly which we use extensively in my tests. More details on **OpenCover-filters** can be found in the
 [OpenCover documentation (pdf)](https://github.com/sawilde/opencover/blob/master/main/OpenCover.Documentation/Usage.pdf?raw=true)
@@ -252,11 +294,15 @@ or the [OpenCover Usage Wiki (GitHub)](https://github.com/opencover/opencover/wi
 
 To generate a HTML report from the coverage xml use the `CoverageReport`-target, i.e.
 
-	build [project] /t:CoverageReport
+```bash
+build [project] /t:CoverageReport
+```
 
 This will generate a directory containing HTML defaulting to
 
-	<CoverageReportDir>$(TestResultsDir)coverage\$(ProjectName)</CoverageReportDir>
+```xml
+<CoverageReportDir>$(TestResultsDir)coverage\$(ProjectName)</CoverageReportDir>
+```
 
 #### Coverage vs. Test
 
@@ -264,31 +310,37 @@ Running coverage usually includes running tests so you can produce results for b
 
 This is the default behavior but since there may be cases where you want to get coverage even on failing code you can disable this by setting the project property `CoverageFailOnTargetFail` to `false` like this
 
-	<PropertyGroup>
-		<CoverageFailOnTargetFail>false</CoverageFailOnTargetFail>
-	</PropertyGroup>
+```xml
+<PropertyGroup>
+  <CoverageFailOnTargetFail>false</CoverageFailOnTargetFail>
+</PropertyGroup>
+```
 
 ### Coverage Upload
 
 [Status badges are cool!](http://awesome-incremented.blogspot.de/2015/05/github-boosting-your-readmemd-with.html)
 To show how well your project is covered by tests you can upload your code coverage statistics using the `CoverageUpload`-target, i.e.
 
-    build [project] /t:CoverageUpload /p:CoverAllsToken=[repo_token]
+```bash
+build [project] /t:CoverageUpload /p:CoverAllsToken=[repo_token]
+```
 
 For this you need to additional specify the `CoverAllsToken` property which you can find on your `coveralls.io` page. Note that CoverAlls.io states that it and will be free for open source projects on their [Pricing page](https://coveralls.io/pricing).
 
-Again, you can specify the property on the command line like in the example above or anywhere in your project or solution specific targets files. We recommend the `solution.targets`. 
+Again, you can specify the property on the command line like in the example above or anywhere in your project or solution specific targets files. We recommend the `solution.targets`.
 
 ### Project-specific targets
 
 Overriding the default solution targets can be achieved by adding a project specific targets file. The default `solution.targets` of OneClickBuild will pick this up by doing a conditional import
 
-    <!-- ## Automatically import project-specific overrides (place this last) -->
-	<Import Project="$(ProjectDir)\$(ProjectName).targets" Condition="Exists('$(ProjectDir)\$(ProjectName).targets')"/>
+```xml
+<!-- ## Automatically import project-specific overrides (place this last) -->
+<Import Project="$(ProjectDir)\$(ProjectName).targets" Condition="Exists('$(ProjectDir)\$(ProjectName).targets')"/>
+```
 
 #### Deploying with ClickOnce
 
-**Note:** With [#18](https://github.com/awesome-inc/OneClickBuild/issues/18) ClickOnce is now supported out-of-the-box by the target [SetClickOnceVersion](https://github.com/awesome-inc/OneClickBuild/blob/develop/OneClickBuild/build/OneClickBuild.targets#L38). 
+**Note:** With [#18](https://github.com/awesome-inc/OneClickBuild/issues/18) ClickOnce is now supported out-of-the-box by the target [SetClickOnceVersion](https://github.com/awesome-inc/OneClickBuild/blob/develop/OneClickBuild/build/OneClickBuild.targets#L38).
 
 This includes standard Windows applications as well as Microsoft Office Plugins based on [VSTO](https://en.wikipedia.org/wiki/Visual_Studio_Tools_for_Office).
 
@@ -298,11 +350,15 @@ This includes standard Windows applications as well as Microsoft Office Plugins 
 
 In Jenkins just use the *Execute Windows Batch command* and use a command line like
 
-	build [project] [/t:targets] [/v:verbosity]
+```bash
+build [project] [/t:targets] [/v:verbosity]
+```
 
 For automatic builds you may set MSBuild's output verbosity to minimal, e.g.
 
-	build [project] [/t:targets] /v:m
+```bash
+build [project] [/t:targets] /v:m
+```
 
 To publish test results use the [NUnit plugin](https://wiki.jenkins-ci.org/display/JENKINS/NUnit+Plugin)
 and add the Post-Build step *Publish NUnit test result report* with
@@ -312,22 +368,28 @@ and add the Post-Build step *Publish NUnit test result report* with
 To publish coverage reports use the [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin)
 and add the Post-Build step *Publish HTML reports* with
 
-	testresults\coverage\[project] | index.htm | Coverage [project]
+```
+testresults\coverage\[project] | index.htm | Coverage [project]
+```
 
 Note that you need to generate a HTML report from the OpenCover results using
 
-	build [project] /t:CoverageReport
+```bash
+build [project] /t:CoverageReport
+```
 
 #### GitLab CI
 
 Here is an example `.gitlab-ci.yml`
 
-	stages:
-	  - build
-	
-	job:
-	  stage: build
-	  script: build.bat /v:m    
+```yml
+stages:
+  - build
+
+job:
+  stage: build
+  script: build.bat /v:m
+```
 
 For more information see the [GitLab CI Documentation](https://docs.gitlab.com/ce/ci/yaml/).
 
@@ -335,22 +397,30 @@ For more information see the [GitLab CI Documentation](https://docs.gitlab.com/c
 
 To build a [NuGet](http://en.wikipedia.org/wiki/NuGet) package from your library simply add a `Package.nuspec` file to your project and build the `Package`-target, e.g.
 
-	build MyLibrary\MyLibrary.csproj /t:Package
+```bash
+build MyLibrary\MyLibrary.csproj /t:Package
+```
 
 which will output `MyLibrary.[version].nupkg` to the project directory. You can override the default filename for `Package.nuspec` with the `NuspecFile`-property in `solution.targets` like
 
-	<NuspecFile>MyNuSpecFile.nuspec</NuspecFile>
+```xml
+<NuspecFile>MyNuSpecFile.nuspec</NuspecFile>
+```
 
 To push the built package to a NuGet gallery use the `Deploy`-target like
 
-	build MyLibrary\MyLibrary.csproj /t:Package
+```bash
+build MyLibrary\MyLibrary.csproj /t:Package
+```
 
 To control the NuGet server the package is pushed to, override the property
 `NuGetSourceToDeploy` in `solution.targets`. It defaults to
- 
-	<PropertyGroup>
-		<NuGetSourceToDeploy>https://www.nuget.org</NuGetSourceToDeploy>
-	</PropertyGroup>
+
+```xml
+<PropertyGroup>
+  <NuGetSourceToDeploy>https://www.nuget.org</NuGetSourceToDeploy>
+</PropertyGroup>
+```
 
 #### <a name="ci-deploy"></a>Deploying locally vs. CI server
 
@@ -360,56 +430,66 @@ OneClickBuild detects the presence of a CI build by checking for environment var
 
 Although not recommended you can override this by setting
 
-    <DeployFailOnBuildNotSet>false</DeployFailOnBuildNotSet>
+```xml
+<DeployFailOnBuildNotSet>false</DeployFailOnBuildNotSet>
+```
 
-in your `solution.targets`. 
+in your `solution.targets`.
 
 #### Example Package.nuspec
 Here is a simplified version of the `Package.nuspec` that is used by `OneClickBuild` itself:
 
-	<?xml version="1.0"?>
-	<package >
-	  <metadata>
-		<id>OneClickBuild</id>
-		<version>$Version$</version>
-		<title>OneClickBuild</title>
-	    <authors>Awesome Incremented and Contributors</authors>
-	    <owners>Awesome Incremented and Contributors</owners>
-	    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
-		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<description>Simplify your build, run tests and coverage.</description>
-		<summary>...</summary>
-	    <copyright>Copyright © 2016 All Rights Reserved.</copyright>
-	    <developmentDependency>true</developmentDependency>
-	    <releaseNotes>Revision: $Revision$</releaseNotes>
-	    <projectUrl>https://github.com/awesome-inc/OneClickBuild</projectUrl>
-		<dependencies>
-	      <dependency id="GitVersionTask" version="3.4.1" />
-		</dependencies>    
-		<references></references>
-		<tags>continuous integration</tags>
-	  </metadata>
-	  <files>
-	    <file src="tools\*" target="tools" />
-	    <file src="build\*" target="build" />
-	    <file src="readme.txt" target="" />
-	  </files>
-	</package>
+```xml
+<?xml version="1.0"?>
+<package >
+  <metadata>
+  <id>OneClickBuild</id>
+  <version>$Version$</version>
+  <title>OneClickBuild</title>
+    <authors>Awesome Incremented and Contributors</authors>
+    <owners>Awesome Incremented and Contributors</owners>
+    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+  <requireLicenseAcceptance>false</requireLicenseAcceptance>
+  <description>Simplify your build, run tests and coverage.</description>
+  <summary>...</summary>
+    <copyright>Copyright © 2016 All Rights Reserved.</copyright>
+    <developmentDependency>true</developmentDependency>
+    <releaseNotes>Revision: $Revision$</releaseNotes>
+    <projectUrl>https://github.com/awesome-inc/OneClickBuild</projectUrl>
+  <dependencies>
+      <dependency id="GitVersionTask" version="3.4.1" />
+  </dependencies>
+  <references></references>
+  <tags>continuous integration</tags>
+  </metadata>
+  <files>
+    <file src="tools\*" target="tools" />
+    <file src="build\*" target="build" />
+    <file src="readme.txt" target="" />
+  </files>
+</package>
+```
 
 ### Continuous Inspection (SonarQube)
 
+TODO: SonarQube C# support changed to an explicit msbuild scanner, cf.:
+
+- [Analyzing with SonarQube Scanner for MSBuild](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSBuild)
+
+**Outdated:**
 NUnit test results as well as OpenCover coverage reports can be directly reused in [SonarQube](http://www.sonarqube.org/).
 Here is a snippet from a sample *sonar-project.properties*:
 
-	... 
-	# NUnit test results (since C# 3.3)
-	# cf.: http://stackoverflow.com/questions/27460489/how-to-include-nunit-test-results-in-sonarcube-4-5-1-c-sharp-plugin-3-3-sonar-pr
-	sonar.cs.nunit.reportsPaths=testresults/MyApp.Tests.xml
-	
-	# Code Coverage
-	sonar.cs.opencover.reportsPaths=testresults/MyApp.Coverage.xml
-	...
+```
+...
+# NUnit test results (since C# 3.3)
+# cf.: http://stackoverflow.com/questions/27460489/how-to-include-nunit-test-results-in-sonarcube-4-5-1-c-sharp-plugin-3-3-sonar-pr
+sonar.cs.nunit.reportsPaths=testresults/MyApp.Tests.xml
 
+# Code Coverage
+sonar.cs.opencover.reportsPaths=testresults/MyApp.Coverage.xml
+...
+```
 
 ## FAQ
 
@@ -417,12 +497,14 @@ Here is a snippet from a sample *sonar-project.properties*:
 
 The command `restore` is supported since NuGet v2.7. You probably need to update your `NuGet.exe` by typing
 
-	nuget.exe update -self
+```bash
+nuget.exe update -self
+```
 
 ### I use .NET 4.0 and when running coverage i get an error saying that "assembly 'System.Core, Version=2.0.5.0' could not be loaded."
 
 OpenCover uses [AutoFac](https://code.google.com/p/autofac/) which is a great [IoC](http://de.wikipedia.org/wiki/Inversion_of_Control) container.
-However, at the time of writing *AutoFac* is deployed as [Portable Class Library](http://msdn.microsoft.com/en-us/library/vstudio/gg597391(v=vs.100).aspx) which 
+However, at the time of writing *AutoFac* is deployed as [Portable Class Library](http://msdn.microsoft.com/en-us/library/vstudio/gg597391(v=vs.100).aspx) which
 - for .NET 4.0 - requires the [KB2468871](http://support.microsoft.com/kb/2468871)-Patch  as explained
 in [AutoFac Issue 415](https://code.google.com/p/autofac/issues/detail?id=415).
 
@@ -430,26 +512,30 @@ in [AutoFac Issue 415](https://code.google.com/p/autofac/issues/detail?id=415).
 
 You maybe targeting the `x86` platform and have defined `AnyCPU` as default in your project file.
 When building from Visual Studio the platform property is set via the solution file. However, when building
-the project you did not specify the platform property, thus defaulting to `AnyCPU` resulting in `OutputPath` not set. 
+the project you did not specify the platform property, thus defaulting to `AnyCPU` resulting in `OutputPath` not set.
 To fix this issue either set the Platform property accordingly or just set the default to `x86` like this
 
-	<?xml version="1.0" encoding="utf-8"?>
-	<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	  <PropertyGroup>
-		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-		<!-- <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform> -->
-		<Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-	   
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+  <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+  <!-- <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform> -->
+  <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+```
+
 The full error message should read something like this
 
-	"<myproject>.csproj" (Build target) (1) -> 
-	(_CheckForInvalidConfigurationAndPlatform target) ->
-	  C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.targets(609,5)
-	: error : The OutputPath property is not set for project '<myproject>.csproj'.
-	Please check to make sure that you have specified a valid combination of 
-	Configuration and Platform for this project.  Configuration='Release'  Platform='AnyCPU'.  
-	You may be seeing this message because you are trying to build a project without a solution file,
-	and have specified a non-default Configuration or Platform that doesn't exist for this project. [<myproject>.csproj]
+```bash
+"<myproject>.csproj" (Build target) (1) ->
+(_CheckForInvalidConfigurationAndPlatform target) ->
+  C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.targets(609,5)
+: error : The OutputPath property is not set for project '<myproject>.csproj'.
+Please check to make sure that you have specified a valid combination of
+Configuration and Platform for this project.  Configuration='Release'  Platform='AnyCPU'.
+You may be seeing this message because you are trying to build a project without a solution file,
+and have specified a non-default Configuration or Platform that doesn't exist for this project. [<myproject>.csproj]
+```
 
 ### I get an MSBuild error saying that a `<project>.metaproj` could not be found
 
@@ -467,19 +553,21 @@ See section [Deploying locally vs. CI server](#ci-deploy).
 
 ### **Package** target for pre-release NuGet packages (features) fails with message `1.0.0-123-foo' is not a valid version string.`
 
-This occurs for branch names 
+This occurs for branch names
 
 - beginning with a number, e.g. issue or ticket number
 - configured without a GitVersion tag prefix, e.g. feature branches + GitVersion < 4.x
 
 When using issue trackers (e.g. JIRA) it is common practice to prefix the branch name with the issue number so branch and issue can be easily synced.
 
-For branches without a GitVersion tag prefix this causes the prelease-tag of the NuGet-version to begin with a number. 
+For branches without a GitVersion tag prefix this causes the prelease-tag of the NuGet-version to begin with a number.
 
 As of NuGet 2.9 this can be handled by all NuGet operations except `nuget pack`, cf. [NuGet issue #1743](https://github.com/NuGet/Home/issues/1743).
 
 One way to resolve this is to configure prerelease-tag. For example, a good configuration for feature branches is
 
-    tag: alpha.{BranchName}
+```yml
+  tag: alpha.{BranchName}
+```
 
 Note that using the branch name is supported since [GitVersion 3.4.0](https://github.com/GitTools/GitVersion/releases/tag/v3.4.0). In fact, using `alpha` as a prerelease tag for feature branches is so useful that it is [proposed to be the default in GitVersion 4.0](https://github.com/GitTools/GitVersion/issues/664#issuecomment-177194815)
