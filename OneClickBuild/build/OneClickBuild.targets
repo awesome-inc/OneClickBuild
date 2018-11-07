@@ -16,8 +16,10 @@
     <Build Condition="'$(CI)' == 'True'">$(APPVEYOR_BUILD_NUMBER)</Build>
     <!-- Use Build-Number from Jenkins or TeamCity -->
     <Build Condition="'$(BUILD_NUMBER)' != ''">$(BUILD_NUMBER)</Build>
-    <!-- Use Build-Number from Gitlab -->
+    <!-- Use Build-Number from Gitlab < 9.0-->
     <Build Condition="'$(CI_BUILD_ID)' != ''">$(CI_BUILD_ID)</Build>
+    <!-- Use Build-Number from Gitlab -->
+    <Build Condition="'$(CI_JOB_ID)' != ''">$(CI_JOB_ID)</Build>
     <!-- Fallback to "0" if still not set -->
     <Build Condition="'$(Build)' == ''">0</Build>
     <DeployFailOnBuildNotSet Condition="'$(DeployFailOnBuildNotSet)' == ''">true</DeployFailOnBuildNotSet>
