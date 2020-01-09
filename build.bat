@@ -6,6 +6,17 @@ set msbuild=
 for %%a in (MSBuild.exe) do (set msbuild=%%~$PATH:a)
 if exist %msbuild% goto checkNuget
 
+rem Visual Studio Build Tools 2019
+set msbuild=C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe
+if exist "%msbuild%" goto checkNuget
+rem VS2019
+set msbuild=C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe
+if exist "%msbuild%" goto checkNuget
+set msbuild=C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Current\Bin\MSBuild.exe
+if exist "%msbuild%" goto checkNuget
+set msbuild=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe
+if exist "%msbuild%" goto checkNuget
+
 rem Visual Studio Build Tools 2017
 set msbuild=C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\MSBuild.exe
 if exist "%msbuild%" goto checkNuget
