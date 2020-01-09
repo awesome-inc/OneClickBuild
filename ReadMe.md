@@ -112,13 +112,13 @@ where the [MSBuild Command-Line](http://msdn.microsoft.com/en-us/library/ms16431
 
 So to build your solution, open a command prompt in your solution directory and just type
 
-```
+```console
 build
 ```
 
 To clean and build a specific project type
 
-```
+```console
 build Project\Project.csproj /t:Clean;Build
 ```
 
@@ -349,31 +349,33 @@ This includes standard Windows applications as well as Microsoft Office Plugins 
 
 In Jenkins just use the *Execute Windows Batch command* and use a command line like
 
-```bash
+```console
 build [project] [/t:targets] [/v:verbosity]
 ```
 
 For automatic builds you may set MSBuild's output verbosity to minimal, e.g.
 
-```bash
+```console
 build [project] [/t:targets] /v:m
 ```
 
 To publish test results use the [NUnit plugin](https://wiki.jenkins-ci.org/display/JENKINS/NUnit+Plugin)
 and add the Post-Build step *Publish NUnit test result report* with
 
-	testresults/*.Tests.xml
+```ini
+testresults/*.Tests.xml
+```
 
 To publish coverage reports use the [HTML Publisher Plugin](https://wiki.jenkins-ci.org/display/JENKINS/HTML+Publisher+Plugin)
 and add the Post-Build step *Publish HTML reports* with
 
-```
+```console
 testresults\coverage\[project] | index.htm | Coverage [project]
 ```
 
 Note that you need to generate a HTML report from the OpenCover results using
 
-```bash
+```console
 build [project] /t:CoverageReport
 ```
 
@@ -396,7 +398,7 @@ For more information see the [GitLab CI Documentation](https://docs.gitlab.com/c
 
 To build a [NuGet](http://en.wikipedia.org/wiki/NuGet) package from your library simply add a `Package.nuspec` file to your project and build the `Package`-target, e.g.
 
-```bash
+```console
 build MyLibrary\MyLibrary.csproj /t:Package
 ```
 
@@ -408,7 +410,7 @@ which will output `MyLibrary.[version].nupkg` to the project directory. You can 
 
 To push the built package to a NuGet gallery use the `Deploy`-target like
 
-```bash
+```console
 build MyLibrary\MyLibrary.csproj /t:Package
 ```
 
@@ -436,6 +438,7 @@ Although not recommended you can override this by setting
 in your `solution.targets`.
 
 #### Example Package.nuspec
+
 Here is a simplified version of the `Package.nuspec` that is used by `OneClickBuild` itself:
 
 ```xml
@@ -479,7 +482,7 @@ TODO: SonarQube C# support changed to an explicit msbuild scanner, cf.:
 NUnit test results as well as OpenCover coverage reports can be directly reused in [SonarQube](http://www.sonarqube.org/).
 Here is a snippet from a sample *sonar-project.properties*:
 
-```
+```properties
 ...
 # NUnit test results (since C# 3.3)
 # cf.: http://stackoverflow.com/questions/27460489/how-to-include-nunit-test-results-in-sonarcube-4-5-1-c-sharp-plugin-3-3-sonar-pr
@@ -496,7 +499,7 @@ sonar.cs.opencover.reportsPaths=testresults/MyApp.Coverage.xml
 
 The command `restore` is supported since NuGet v2.7. You probably need to update your `NuGet.exe` by typing
 
-```bash
+```console
 nuget.exe update -self
 ```
 
@@ -504,7 +507,9 @@ nuget.exe update -self
 
 OpenCover uses [AutoFac](https://code.google.com/p/autofac/) which is a great [IoC](http://de.wikipedia.org/wiki/Inversion_of_Control) container.
 However, at the time of writing *AutoFac* is deployed as [Portable Class Library](http://msdn.microsoft.com/en-us/library/vstudio/gg597391(v=vs.100).aspx) which
+
 - for .NET 4.0 - requires the [KB2468871](http://support.microsoft.com/kb/2468871)-Patch  as explained
+
 in [AutoFac Issue 415](https://code.google.com/p/autofac/issues/detail?id=415).
 
 ### I get an MSBuild error saying that OutputPath property is not set
@@ -525,7 +530,7 @@ To fix this issue either set the Platform property accordingly or just set the d
 
 The full error message should read something like this
 
-```bash
+```console
 "<myproject>.csproj" (Build target) (1) ->
 (_CheckForInvalidConfigurationAndPlatform target) ->
   C:\Windows\Microsoft.NET\Framework\v4.0.30319\Microsoft.Common.targets(609,5)
