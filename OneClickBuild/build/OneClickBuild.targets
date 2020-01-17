@@ -280,7 +280,7 @@
 
   <Target Name="SelectReportGenerator" Condition="'@(ReportGenerator)'==''">
     <PropertyGroup>
-      <_ReportGeneratorPath>$(SolutionDir)packages\ReportGenerator.*\tools\ReportGenerator.exe</_ReportGeneratorPath>
+      <_ReportGeneratorPath>$(SolutionDir)packages\ReportGenerator.*\tools\net47\ReportGenerator.exe</_ReportGeneratorPath>
     </PropertyGroup>
 
     <!--Ensure installed -->
