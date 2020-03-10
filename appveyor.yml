@@ -9,7 +9,7 @@ nuget:
   disable_publish_on_pr: true
 environment:
   apiKey:
-    secure: lrwREUV4nO99AU0A6xVx/MNF0BaJc8A1B8dwEGMLqmYKGqD5E7PJ/IC9RHcle6pk
+    secure: 1gZfYXDnZKFT1JddFudQ6YWtaY3b5dd9TRyGgMWAvDcaemYinhdGIzRa21VKSGx5
 before_build:
   - ps: gitversion /l console /output buildserver
   - nuget setapikey %apiKey% -Verbosity quiet
